@@ -1,0 +1,489 @@
+*** cudf/cpp/tests/scalar/scalar_test.cpp-dist	2022-12-24 21:22:20.602014183 +0900
+--- cudf/cpp/tests/scalar/scalar_test.cpp	2022-12-24 21:34:18.791851065 +0900
+***************
+*** 35,41 ****
+  TYPED_TEST(TypedScalarTest, DefaultValidity)
+  {
+    using Type = cudf::device_storage_type_t<TypeParam>;
+!   Type value = cudf::test::make_type_param_scalar<TypeParam>(7);
+    cudf::scalar_type_t<TypeParam> s(value);
+  
+    EXPECT_TRUE(s.is_valid());
+--- 35,41 ----
+  TYPED_TEST(TypedScalarTest, DefaultValidity)
+  {
+    using Type = cudf::device_storage_type_t<TypeParam>;
+!   Type value = cudf::test::make_type_param_scalar<Type>(7);
+    cudf::scalar_type_t<TypeParam> s(value);
+  
+    EXPECT_TRUE(s.is_valid());
+***************
+*** 73,79 ****
+  TYPED_TEST(TypedScalarTest, CopyConstructor)
+  {
+    using Type = cudf::device_storage_type_t<TypeParam>;
+!   Type value = cudf::test::make_type_param_scalar<TypeParam>(8);
+    cudf::scalar_type_t<TypeParam> s(value);
+    auto s2 = s;
+  
+--- 73,79 ----
+  TYPED_TEST(TypedScalarTest, CopyConstructor)
+  {
+    using Type = cudf::device_storage_type_t<TypeParam>;
+!   Type value = cudf::test::make_type_param_scalar<Type>(8);
+    cudf::scalar_type_t<TypeParam> s(value);
+    auto s2 = s;
+  
+*** cudf/cpp/tests/hashing/hash_test.cpp-dist	2022-12-24 23:54:43.073432463 +0900
+--- cudf/cpp/tests/hashing/hash_test.cpp	2022-12-24 23:57:22.373205119 +0900
+***************
+*** 1090,1100 ****
+    T nan   = std::numeric_limits<T>::quiet_NaN();
+    T inf   = std::numeric_limits<T>::infinity();
+  
+    cudf::test::fixed_width_column_wrapper<T> const col1(
+      {T(0.0), T(100.0), T(-100.0), min, max, nan, inf, -inf});
+    cudf::test::fixed_width_column_wrapper<T> const col2(
+      {T(-0.0), T(100.0), T(-100.0), min, max, -nan, inf, -inf});
+- 
+    auto const input1 = cudf::table_view({col1});
+    auto const input2 = cudf::table_view({col2});
+  
+--- 1090,1101 ----
+    T nan   = std::numeric_limits<T>::quiet_NaN();
+    T inf   = std::numeric_limits<T>::infinity();
+  
++   constexpr bool f = std::numeric_limits<T>::is_iec559;
++   if (f) {
+    cudf::test::fixed_width_column_wrapper<T> const col1(
+      {T(0.0), T(100.0), T(-100.0), min, max, nan, inf, -inf});
+    cudf::test::fixed_width_column_wrapper<T> const col2(
+      {T(-0.0), T(100.0), T(-100.0), min, max, -nan, inf, -inf});
+    auto const input1 = cudf::table_view({col1});
+    auto const input2 = cudf::table_view({col2});
+  
+***************
+*** 1102,1107 ****
+--- 1103,1109 ----
+    auto const output2 = cudf::hash(input2, cudf::hash_id::HASH_MD5);
+  
+    CUDF_TEST_EXPECT_COLUMNS_EQUAL(output1->view(), output2->view(), verbosity);
++   }
+  }
+  
+  TYPED_TEST(MD5HashTestFloatTyped, TestListExtremes)
+***************
+*** 1112,1117 ****
+--- 1114,1121 ----
+    T nan   = std::numeric_limits<T>::quiet_NaN();
+    T inf   = std::numeric_limits<T>::infinity();
+  
++   constexpr bool f = std::numeric_limits<T>::is_iec559;
++   if (f) {
+    cudf::test::lists_column_wrapper<T> const col1(
+      {{T(0.0)}, {T(100.0), T(-100.0)}, {min, max, nan}, {inf, -inf}});
+    cudf::test::lists_column_wrapper<T> const col2(
+***************
+*** 1124,1129 ****
+--- 1128,1134 ----
+    auto const output2 = cudf::hash(input2, cudf::hash_id::HASH_MD5);
+  
+    CUDF_TEST_EXPECT_COLUMNS_EQUAL(output1->view(), output2->view(), verbosity);
++   }
+  }
+  
+  CUDF_TEST_PROGRAM_MAIN()
+*** cudf/cpp/tests/hash_map/map_test.cu-dist	2022-12-26 09:59:44.210708456 +0900
+--- cudf/cpp/tests/hash_map/map_test.cu	2022-12-26 10:11:00.489040807 +0900
+***************
+*** 46,51 ****
+--- 46,52 ----
+  
+  template <typename T>
+  struct InsertTest : public cudf::test::BaseFixture {
++   try {
+    using key_type   = typename T::key_type;
+    using value_type = typename T::value_type;
+    using pair_type  = typename T::pair_type;
+***************
+*** 64,69 ****
+--- 65,71 ----
+    const cudf::size_type size{10000};
+    rmm::device_uvector<pair_type> pairs{static_cast<std::size_t>(size), cudf::get_default_stream()};
+    std::unique_ptr<map_type, std::function<void(map_type*)>> map;
++   } catch (...) {}
+  };
+  
+  using TestTypes = ::testing::Types<key_value_types<int32_t, int32_t>,
+*** cudf/cpp/tests/sort/is_sorted_tests.cpp-dist	2022-12-26 10:39:20.343707716 +0900
+--- cudf/cpp/tests/sort/is_sorted_tests.cpp	2022-12-26 16:51:10.762295199 +0900
+***************
+*** 272,277 ****
+--- 272,282 ----
+  {
+    using T = TypeParam;
+  
++   if ((std::is_arithmetic_v<T> && !std::is_same_v<T, bool>)
++      ||std::is_same_v<T, bool>
++      ||cudf::is_chrono<T>()
++      ||std::is_same_v<T, cudf::string_view>
++      ||std::is_same_v<T, cudf::struct_view>) {
+    auto col1 = testdata::ascending<T>();
+    cudf::table_view in{{col1}};
+    std::vector<cudf::order> order{cudf::order::ASCENDING};
+***************
+*** 280,291 ****
+--- 285,302 ----
+    auto actual = cudf::is_sorted(in, order, null_precedence);
+  
+    EXPECT_EQ(true, actual);
++   }
+  }
+  
+  TYPED_TEST(IsSortedTest, AscendingFalse)
+  {
+    using T = TypeParam;
+  
++   if ((std::is_arithmetic_v<T> && !std::is_same_v<T, bool>)
++      ||std::is_same_v<T, bool>
++      ||cudf::is_chrono<T>()
++      ||std::is_same_v<T, cudf::string_view>
++      ||std::is_same_v<T, cudf::struct_view>) {
+    auto col1 = testdata::descending<T>();
+    cudf::table_view in{{col1}};
+    std::vector<cudf::order> order{cudf::order::ASCENDING};
+***************
+*** 294,305 ****
+--- 305,322 ----
+    auto actual = cudf::is_sorted(in, order, {});
+  
+    EXPECT_EQ(false, actual);
++   }
+  }
+  
+  TYPED_TEST(IsSortedTest, Descending)
+  {
+    using T = TypeParam;
+  
++     if ((std::is_arithmetic_v<T> && !std::is_same_v<T, bool>)
++      ||std::is_same_v<T, bool>
++      ||cudf::is_chrono<T>()
++      ||std::is_same_v<T, cudf::string_view>
++      ||std::is_same_v<T, cudf::struct_view>) {
+    auto col1 = testdata::descending<T>();
+  
+    cudf::table_view in{{col1}};
+***************
+*** 309,320 ****
+--- 326,343 ----
+    auto actual = cudf::is_sorted(in, order, null_precedence);
+  
+    EXPECT_EQ(true, actual);
++   }
+  }
+  
+  TYPED_TEST(IsSortedTest, DescendingFalse)
+  {
+    using T = TypeParam;
+  
++     if ((std::is_arithmetic_v<T> && !std::is_same_v<T, bool>)
++      ||std::is_same_v<T, bool>
++      ||cudf::is_chrono<T>()
++      ||std::is_same_v<T, cudf::string_view>
++      ||std::is_same_v<T, cudf::struct_view>) {
+    auto col1 = testdata::ascending<T>();
+  
+    cudf::table_view in{{col1}};
+***************
+*** 324,329 ****
+--- 347,353 ----
+    auto actual = cudf::is_sorted(in, order, null_precedence);
+  
+    EXPECT_EQ(false, actual);
++   }
+  }
+  
+  TYPED_TEST(IsSortedTest, NullsAfter)
+***************
+*** 390,395 ****
+--- 414,424 ----
+  {
+    using T = TypeParam;
+  
++     if ((std::is_arithmetic_v<T> && !std::is_same_v<T, bool>)
++      ||std::is_same_v<T, bool>
++      ||cudf::is_chrono<T>()
++      ||std::is_same_v<T, cudf::string_view>
++      ||std::is_same_v<T, cudf::struct_view>) {
+    auto col1 = testdata::ascending<T>();
+    auto col2 = testdata::ascending<T>();
+  
+***************
+*** 398,409 ****
+--- 427,444 ----
+    std::vector<cudf::null_order> null_precedence{};
+  
+    EXPECT_THROW(cudf::is_sorted(in, order, null_precedence), cudf::logic_error);
++   }
+  }
+  
+  TYPED_TEST(IsSortedTest, OrderArgsTooMany)
+  {
+    using T = TypeParam;
+  
++     if ((std::is_arithmetic_v<T> && !std::is_same_v<T, bool>)
++      ||std::is_same_v<T, bool>
++      ||cudf::is_chrono<T>()
++      ||std::is_same_v<T, cudf::string_view>
++      ||std::is_same_v<T, cudf::struct_view>) {
+    auto col1 = testdata::ascending<T>();
+  
+    cudf::table_view in{{col1}};
+***************
+*** 411,416 ****
+--- 446,452 ----
+    std::vector<cudf::null_order> null_precedence{};
+  
+    EXPECT_THROW(cudf::is_sorted(in, order, null_precedence), cudf::logic_error);
++   }
+  }
+  
+  TYPED_TEST(IsSortedTest, NullOrderArgsTooFew)
+*** cudf/cpp/tests/replace/replace_tests.cpp-dist	2022-12-26 13:46:12.068063166 +0900
+--- cudf/cpp/tests/replace/replace_tests.cpp	2022-12-26 18:37:21.911783532 +0900
+***************
+*** 398,458 ****
+  TYPED_TEST(ReplaceTest, ReplaceEvenPosition)
+  {
+    using T                 = TypeParam;
+!   auto const input_column = cudf::test::make_type_param_vector<T>({1, 2, 3, 4, 5, 6, 7, 8});
+!   auto const values_to_replace_column  = cudf::test::make_type_param_vector<T>({2, 6, 4, 8});
+!   auto const replacement_values_column = cudf::test::make_type_param_vector<T>({0, 4, 2, 6});
+  
+    test_replace<T>(input_column, values_to_replace_column, replacement_values_column);
+  }
+  
+  // Similar test as ReplaceEvenPosition, but with unordered data
+  TYPED_TEST(ReplaceTest, Unordered)
+  {
+    using T                 = TypeParam;
+    auto const input_column = cudf::test::make_type_param_vector<T>({7, 5, 6, 3, 1, 2, 8, 4});
+    auto const values_to_replace_column  = cudf::test::make_type_param_vector<T>({2, 6, 4, 8});
+    auto const replacement_values_column = cudf::test::make_type_param_vector<T>({0, 4, 2, 6});
+  
+    test_replace<T>(input_column, values_to_replace_column, replacement_values_column);
+  }
+  
+  // Testing with Nothing To Replace
+  TYPED_TEST(ReplaceTest, NothingToReplace)
+  {
+    using T                 = TypeParam;
+    auto const input_column = cudf::test::make_type_param_vector<T>({7, 5, 6, 3, 1, 2, 8, 4});
+    auto const values_to_replace_column  = cudf::test::make_type_param_vector<T>({10, 11, 12});
+    auto const replacement_values_column = cudf::test::make_type_param_vector<T>({15, 16, 17});
+  
+    test_replace<T>(input_column, values_to_replace_column, replacement_values_column);
+  }
+  
+  // Testing with empty Data
+  TYPED_TEST(ReplaceTest, EmptyData)
+  {
+    using T = TypeParam;
+    thrust::host_vector<T> input_column{{}};
+    auto const values_to_replace_column  = cudf::test::make_type_param_vector<T>({10, 11, 12});
+    auto const replacement_values_column = cudf::test::make_type_param_vector<T>({15, 16, 17});
+  
+    test_replace<T>(input_column, values_to_replace_column, replacement_values_column);
+  }
+  
+  // Testing with empty Replace
+  TYPED_TEST(ReplaceTest, EmptyReplace)
+  {
+    using T                 = TypeParam;
+    auto const input_column = cudf::test::make_type_param_vector<T>({7, 5, 6, 3, 1, 2, 8, 4});
+    thrust::host_vector<T> values_to_replace_column{};
+    thrust::host_vector<T> replacement_values_column{};
+  
+    test_replace<T>(input_column, values_to_replace_column, replacement_values_column);
+  }
+  
+  // Testing with input column containing nulls
+  TYPED_TEST(ReplaceTest, NullsInData)
+  {
+    using T                 = TypeParam;
+    auto const input_column = cudf::test::make_type_param_vector<T>({7, 5, 6, 3, 1, 2, 8, 4});
+    auto const input_column_valid =
+      cudf::test::make_type_param_vector<cudf::valid_type>({1, 1, 1, 0, 0, 1, 1, 1});
+--- 398,485 ----
+  TYPED_TEST(ReplaceTest, ReplaceEvenPosition)
+  {
+    using T                 = TypeParam;
+!   if ((cudf::is_fixed_width<TypeParam>() && !cudf::is_timestamp_t<TypeParam>::value)
+!     || cudf::is_timestamp_t<TypeParam>::value
+!     || std::is_same_v<TypeParam, std::string>) {
+!   auto const input_param = {1,2,3,4,5,6,7,8};
+!   auto const values_to_replace_param = {2,6,4,8};
+!   auto const replacement_values_param = {0,4,2,6};
+!   auto const input_column = cudf::test::make_type_param_vector<T>(*input_param);
+!   auto const values_to_replace_column  = cudf::test::make_type_param_vector<T>(*replacement_values_param);
+!   auto const replacement_values_column = cudf::test::make_type_param_vector<T>(*replacement_values_column);
+  
+    test_replace<T>(input_column, values_to_replace_column, replacement_values_column);
++   } 
++ 
+  }
+  
+  // Similar test as ReplaceEvenPosition, but with unordered data
+  TYPED_TEST(ReplaceTest, Unordered)
+  {
+    using T                 = TypeParam;
++   if ((cudf::is_fixed_width<TypeParam>() && !cudf::is_timestamp_t<TypeParam>::value)
++     || cudf::is_timestamp_t<TypeParam>::value
++     || std::is_same_v<TypeParam, std::string>) {
+    auto const input_column = cudf::test::make_type_param_vector<T>({7, 5, 6, 3, 1, 2, 8, 4});
+    auto const values_to_replace_column  = cudf::test::make_type_param_vector<T>({2, 6, 4, 8});
+    auto const replacement_values_column = cudf::test::make_type_param_vector<T>({0, 4, 2, 6});
+  
+    test_replace<T>(input_column, values_to_replace_column, replacement_values_column);
++   }
+  }
+  
+  // Testing with Nothing To Replace
+  TYPED_TEST(ReplaceTest, NothingToReplace)
+  {
+    using T                 = TypeParam;
++   if ((cudf::is_fixed_width<TypeParam>() && !cudf::is_timestamp_t<TypeParam>::value)
++     || cudf::is_timestamp_t<TypeParam>::value
++     || std::is_same_v<TypeParam, std::string>) {
+    auto const input_column = cudf::test::make_type_param_vector<T>({7, 5, 6, 3, 1, 2, 8, 4});
+    auto const values_to_replace_column  = cudf::test::make_type_param_vector<T>({10, 11, 12});
+    auto const replacement_values_column = cudf::test::make_type_param_vector<T>({15, 16, 17});
+  
+    test_replace<T>(input_column, values_to_replace_column, replacement_values_column);
++   }
+  }
+  
+  // Testing with empty Data
+  TYPED_TEST(ReplaceTest, EmptyData)
+  {
+    using T = TypeParam;
++   if ((cudf::is_fixed_width<TypeParam>() && !cudf::is_timestamp_t<TypeParam>::value)
++     || cudf::is_timestamp_t<TypeParam>::value
++     || std::is_same_v<TypeParam, std::string>) {
+    thrust::host_vector<T> input_column{{}};
+    auto const values_to_replace_column  = cudf::test::make_type_param_vector<T>({10, 11, 12});
+    auto const replacement_values_column = cudf::test::make_type_param_vector<T>({15, 16, 17});
+  
+    test_replace<T>(input_column, values_to_replace_column, replacement_values_column);
++   }
+  }
+  
+  // Testing with empty Replace
+  TYPED_TEST(ReplaceTest, EmptyReplace)
+  {
+    using T                 = TypeParam;
++   if ((cudf::is_fixed_width<TypeParam>() && !cudf::is_timestamp_t<TypeParam>::value)
++     || cudf::is_timestamp_t<TypeParam>::value
++     || std::is_same_v<TypeParam, std::string>) {
+    auto const input_column = cudf::test::make_type_param_vector<T>({7, 5, 6, 3, 1, 2, 8, 4});
+    thrust::host_vector<T> values_to_replace_column{};
+    thrust::host_vector<T> replacement_values_column{};
+  
+    test_replace<T>(input_column, values_to_replace_column, replacement_values_column);
++   }
+  }
+  
+  // Testing with input column containing nulls
+  TYPED_TEST(ReplaceTest, NullsInData)
+  {
+    using T                 = TypeParam;
++   if ((cudf::is_fixed_width<TypeParam>() && !cudf::is_timestamp_t<TypeParam>::value)
++     || cudf::is_timestamp_t<TypeParam>::value
++     || std::is_same_v<TypeParam, std::string>) {
+    auto const input_column = cudf::test::make_type_param_vector<T>({7, 5, 6, 3, 1, 2, 8, 4});
+    auto const input_column_valid =
+      cudf::test::make_type_param_vector<cudf::valid_type>({1, 1, 1, 0, 0, 1, 1, 1});
+***************
+*** 461,472 ****
+--- 488,503 ----
+  
+    test_replace<T>(
+      input_column, values_to_replace_column, replacement_values_column, input_column_valid);
++   }
+  }
+  
+  // Testing with replacement column containing nulls
+  TYPED_TEST(ReplaceTest, NullsInNewValues)
+  {
+    using T                 = TypeParam;
++   if ((cudf::is_fixed_width<TypeParam>() && !cudf::is_timestamp_t<TypeParam>::value)
++     || cudf::is_timestamp_t<TypeParam>::value
++     || std::is_same_v<TypeParam, std::string>) {
+    auto const input_column = cudf::test::make_type_param_vector<T>({7, 5, 6, 3, 1, 2, 8, 4});
+    auto const values_to_replace_column  = cudf::test::make_type_param_vector<T>({2, 6, 4, 8});
+    auto const replacement_values_column = cudf::test::make_type_param_vector<T>({0, 4, 2, 6});
+***************
+*** 478,489 ****
+--- 509,524 ----
+                            replacement_values_column,
+                            {},
+                            replacement_values_valid);
++   }
+  }
+  
+  // Testing with both replacement and input column containing nulls
+  TYPED_TEST(ReplaceTest, NullsInBoth)
+  {
+    using T                 = TypeParam;
++   if ((cudf::is_fixed_width<TypeParam>() && !cudf::is_timestamp_t<TypeParam>::value)
++     || cudf::is_timestamp_t<TypeParam>::value
++     || std::is_same_v<TypeParam, std::string>) {
+    auto const input_column = cudf::test::make_type_param_vector<T>({7, 5, 6, 3, 1, 2, 8, 4});
+    auto const input_column_valid =
+      cudf::test::make_type_param_vector<cudf::valid_type>({1, 1, 1, 0, 0, 1, 1, 1});
+***************
+*** 497,502 ****
+--- 532,538 ----
+                            replacement_values_column,
+                            input_column_valid,
+                            replacement_values_valid);
++   }
+  }
+  
+  // Test with much larger data sets
+***************
+*** 510,517 ****
+      return std::rand() % (REPLACE_SIZE);
+    });
+  
+!   std::vector<TypeParam> values_to_replace_column(REPLACE_SIZE);
+!   std::vector<TypeParam> replacement_values_column(REPLACE_SIZE);
+    size_t count = 0;
+    for (size_t i = 0; i < 7; i++) {
+      for (size_t j = 0; j < REPLACE_SIZE; j += 7) {
+--- 546,553 ----
+      return std::rand() % (REPLACE_SIZE);
+    });
+  
+!   std::vector<size_t> values_to_replace_column(REPLACE_SIZE);
+!   std::vector<size_t> replacement_values_column(REPLACE_SIZE);
+    size_t count = 0;
+    for (size_t i = 0; i < 7; i++) {
+      for (size_t j = 0; j < REPLACE_SIZE; j += 7) {
+***************
+*** 533,539 ****
+    ASSERT_NO_THROW(actual_result = cudf::find_and_replace_all(
+                      _input_column, _values_to_replace_column, _replacement_values_column));
+  
+!   std::for_each(input_column.begin(), input_column.end(), [](TypeParam& d) { d += 1; });
+    cudf::test::fixed_width_column_wrapper<TypeParam> expected(input_column.begin(),
+                                                               input_column.end());
+    CUDF_TEST_EXPECT_COLUMNS_EQUAL(expected, *actual_result);
+--- 569,575 ----
+    ASSERT_NO_THROW(actual_result = cudf::find_and_replace_all(
+                      _input_column, _values_to_replace_column, _replacement_values_column));
+  
+!   std::for_each(input_column.begin(), input_column.end(), [](size_t& d) { d += 1; });
+    cudf::test::fixed_width_column_wrapper<TypeParam> expected(input_column.begin(),
+                                                               input_column.end());
+    CUDF_TEST_EXPECT_COLUMNS_EQUAL(expected, *actual_result);

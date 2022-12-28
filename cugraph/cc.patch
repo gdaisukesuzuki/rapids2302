@@ -1,0 +1,237 @@
+*** cugraph/cpp/src/c_api/graph_sg.cpp-dist	2022-11-26 23:04:19.304290234 +0900
+--- cugraph/cpp/src/c_api/graph_sg.cpp	2022-11-26 23:06:51.834476542 +0900
+***************
+*** 164,170 ****
+            std::move(edgelist_dsts),
+            std::move(edgelist_weights),
+            std::move(edgelist_edge_tuple),
+!           cugraph::graph_properties_t{properties_->is_symmetric, properties_->is_multigraph},
+            renumber_,
+            check_);
+  
+--- 164,170 ----
+            std::move(edgelist_dsts),
+            std::move(edgelist_weights),
+            std::move(edgelist_edge_tuple),
+!           cugraph::graph_properties_t{static_cast<bool>(properties_->is_symmetric), static_cast<bool>(properties_->is_multigraph)},
+            renumber_,
+            check_);
+  
+***************
+*** 334,340 ****
+            std::move(edgelist_dsts),
+            std::move(edgelist_weights),
+            std::move(edgelist_edge_tuple),
+!           cugraph::graph_properties_t{properties_->is_symmetric, properties_->is_multigraph},
+            renumber_,
+            check_);
+  
+--- 334,340 ----
+            std::move(edgelist_dsts),
+            std::move(edgelist_weights),
+            std::move(edgelist_edge_tuple),
+!           cugraph::graph_properties_t{static_cast<bool>(properties_->is_symmetric), static_cast<bool>(properties_->is_multigraph)},
+            renumber_,
+            check_);
+  
+*** cugraph/cpp/src/c_api/graph_mg.cpp-dist	2022-11-26 23:08:19.789639408 +0900
+--- cugraph/cpp/src/c_api/graph_mg.cpp	2022-11-26 23:09:01.010455068 +0900
+***************
+*** 170,176 ****
+            std::move(edgelist_dsts),
+            std::move(edgelist_weights),
+            std::move(edgelist_edge_tuple),
+!           cugraph::graph_properties_t{properties_->is_symmetric, properties_->is_multigraph},
+            renumber_,
+            check_);
+  
+--- 170,176 ----
+            std::move(edgelist_dsts),
+            std::move(edgelist_weights),
+            std::move(edgelist_edge_tuple),
+!           cugraph::graph_properties_t{static_cast<bool>(properties_->is_symmetric), static_cast<bool>(properties_->is_multigraph)},
+            renumber_,
+            check_);
+  
+*** cugraph/cpp/src/c_api/k_core.cpp-dist	2022-11-26 23:16:28.484773093 +0900
+--- cugraph/cpp/src/c_api/k_core.cpp	2022-11-26 23:18:37.660039093 +0900
+***************
+*** 119,125 ****
+              do_expensive_check_);
+        }
+  
+!       auto degree_type = reinterpret_cast<cugraph::k_core_degree_type_t>(degree_type);
+  
+        auto [result_src, result_dst, result_wgt] =
+          cugraph::k_core<vertex_t, edge_t, weight_t, multi_gpu>(
+--- 119,125 ----
+              do_expensive_check_);
+        }
+  
+!       auto degree_type = static_cast<cugraph::k_core_degree_type_t>(degree_type_);
+  
+        auto [result_src, result_dst, result_wgt] =
+          cugraph::k_core<vertex_t, edge_t, weight_t, multi_gpu>(
+*** cugraph/cpp/src/c_api/core_number.cpp-dist	2022-11-26 23:16:42.414985793 +0900
+--- cugraph/cpp/src/c_api/core_number.cpp	2022-11-26 23:20:57.008705756 +0900
+***************
+*** 76,87 ****
+        rmm::device_uvector<edge_t> core_numbers(graph_view.local_vertex_partition_range_size(),
+                                                 handle_.get_stream());
+  
+!       auto degree_type = reinterpret_cast<cugraph::k_core_degree_type_t>(degree_type);
+  
+        cugraph::core_number<vertex_t, edge_t, multi_gpu>(handle_,
+                                                          graph_view,
+                                                          core_numbers.data(),
+                                                          degree_type,
+                                                          size_t{0},
+                                                          std::numeric_limits<size_t>::max(),
+                                                          do_expensive_check_);
+--- 76,87 ----
+        rmm::device_uvector<edge_t> core_numbers(graph_view.local_vertex_partition_range_size(),
+                                                 handle_.get_stream());
+  
+!       auto degree_type = static_cast<cugraph::k_core_degree_type_t>(degree_type_);
+  
+        cugraph::core_number<vertex_t, edge_t, multi_gpu>(handle_,
+                                                          graph_view,
+                                                          core_numbers.data(),
+                                                          degree_type,
+                                                          size_t{0},
+                                                          std::numeric_limits<size_t>::max(),
+                                                          do_expensive_check_);
+*** cugraph/cpp/src/c_api/uniform_neighbor_sampling.cpp-dist	2022-11-26 23:59:49.396466847 +0900
+--- cugraph/cpp/src/c_api/uniform_neighbor_sampling.cpp	2022-11-27 00:00:49.848794299 +0900
+***************
+*** 186,192 ****
+      *error);
+  
+    uniform_neighbor_sampling_functor functor{
+!     handle, graph, start, fan_out, with_replacement, do_expensive_check};
+    return cugraph::c_api::run_algorithm(graph, functor, result, error);
+  }
+  
+--- 186,192 ----
+      *error);
+  
+    uniform_neighbor_sampling_functor functor{
+!     handle, graph, start, fan_out, static_cast<bool>(with_replacement), static_cast<bool>(do_expensive_check)};
+    return cugraph::c_api::run_algorithm(graph, functor, result, error);
+  }
+  
+*** cugraph/cpp/include/cugraph/visitors/generic_cascaded_dispatch.hpp-dist	2022-11-27 00:38:15.582702387 +0900
+--- cugraph/cpp/include/cugraph/visitors/generic_cascaded_dispatch.hpp	2022-11-27 00:40:09.081217820 +0900
+***************
+*** 113,121 ****
+      }
+  
+      default: {
+!       std::stringstream ss;
+!       ss << "ERROR: Unknown type enum:" << static_cast<int>(edge_type_type);
+!       throw std::runtime_error(ss.str());
+      }
+    }
+  }
+--- 113,119 ----
+      }
+  
+      default: {
+!       throw std::runtime_error("ERROR: Unknown edge_type_type: " + std::to_string(static_cast<int>(edge_type_type)));
+      }
+    }
+  }
+***************
+*** 157,165 ****
+          edge_type_type, store_transposed, multi_gpu, functor);
+      } break;
+      default: {
+!       std::stringstream ss;
+!       ss << "ERROR: Unknown type enum:" << static_cast<int>(weight_type);
+!       throw std::runtime_error(ss.str());
+      }
+    }
+  }
+--- 155,161 ----
+          edge_type_type, store_transposed, multi_gpu, functor);
+      } break;
+      default: {
+!       throw std::runtime_error("ERROR: Unknown weight_type: " + std::to_string(static_cast<int>(weight_type)));
+      }
+    }
+  }
+***************
+*** 200,208 ****
+          weight_type, edge_type_type, store_transposed, multi_gpu, functor);
+      } break;
+      default: {
+!       std::stringstream ss;
+!       ss << "ERROR: Unknown type enum:" << static_cast<int>(edge_type);
+!       throw std::runtime_error(ss.str());
+      }
+    }
+  }
+--- 196,202 ----
+          weight_type, edge_type_type, store_transposed, multi_gpu, functor);
+      } break;
+      default: {
+!       throw std::runtime_error("ERROR: Unknown edge_type: " + std::to_string(static_cast<int>(edge_type)));
+
+      }
+    }
+  }
+***************
+*** 240,248 ****
+        throw std::runtime_error("ERROR: FLOAT64 not supported for a vertex type");
+      } break;
+      default: {
+!       std::stringstream ss;
+!       ss << "ERROR: Unknown type enum:" << static_cast<int>(vertex_type);
+!       throw std::runtime_error(ss.str());
+      }
+    }
+  }
+--- 234,240 ----
+        throw std::runtime_error("ERROR: FLOAT64 not supported for a vertex type");
+      } break;
+      default: {
+!       throw std::runtime_error("ERROR: Unknown vertex_type: " + std::to_string(static_cast<int>(vertex_type)));
+      }
+    }
+  }
+*** cugraph/cpp/include/cugraph/legacy/graph.hpp-dist	2022-12-01 00:41:29.855567156 +0900
+--- cugraph/cpp/include/cugraph/legacy/graph.hpp	2022-12-01 00:42:00.555986319 +0900
+***************
+*** 385,391 ****
+    vertex_t* dst_indices(void) { return static_cast<vertex_t*>(dst_indices_p.data()); }
+    weight_t* edge_data(void) { return static_cast<weight_t*>(edge_data_p.data()); }
+  
+!   GraphCOOContents<vertex_t, edge_t, weight_t> release() noexcept
+    {
+      vertex_t number_of_vertices = number_of_vertices_p;
+      edge_t number_of_edges      = number_of_edges_p;
+--- 385,391 ----
+    vertex_t* dst_indices(void) { return static_cast<vertex_t*>(dst_indices_p.data()); }
+    weight_t* edge_data(void) { return static_cast<weight_t*>(edge_data_p.data()); }
+  
+!   GraphCOOContents<vertex_t, edge_t, weight_t> release(void) noexcept
+    {
+      vertex_t number_of_vertices = number_of_vertices_p;
+      edge_t number_of_edges      = number_of_edges_p;
+***************
+*** 478,484 ****
+    vertex_t* indices(void) { return static_cast<vertex_t*>(indices_p.data()); }
+    weight_t* edge_data(void) { return static_cast<weight_t*>(edge_data_p.data()); }
+  
+!   GraphSparseContents<vertex_t, edge_t, weight_t> release() noexcept
+    {
+      vertex_t number_of_vertices = number_of_vertices_p;
+      edge_t number_of_edges      = number_of_edges_p;
+--- 478,484 ----
+    vertex_t* indices(void) { return static_cast<vertex_t*>(indices_p.data()); }
+    weight_t* edge_data(void) { return static_cast<weight_t*>(edge_data_p.data()); }
+  
+!   GraphSparseContents<vertex_t, edge_t, weight_t> release(void) noexcept
+    {
+      vertex_t number_of_vertices = number_of_vertices_p;
+      edge_t number_of_edges      = number_of_edges_p;

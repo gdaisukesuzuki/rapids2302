@@ -1,0 +1,37 @@
+*** cuml/cpp/src/umap/optimize.cuh-dist 2022-03-09 01:01:47.242303802 +0900
+--- cuml/cpp/src/umap/optimize.cuh      2022-03-09 01:20:28.604344475 +0900
+***************
+*** 153,159 ****
+      raft::linalg::multiplyScalar(grads.data(), grads.data(), learning_rate, 2, stream);
+      raft::linalg::eltwiseSub(coef, coef, grads.data(), 2, stream);
+  
+!     T* grads_h = (T*)malloc(2 * sizeof(T));
+      raft::update_host(grads_h, grads.data(), 2, stream);
+  
+      raft::interruptible::synchronize(stream);
+--- 153,159 ----
+      raft::linalg::multiplyScalar(grads.data(), grads.data(), learning_rate, 2, stream);
+      raft::linalg::eltwiseSub(coef, coef, grads.data(), 2, stream);
+  
+!     T* grads_h = new T[2];
+      raft::update_host(grads_h, grads.data(), 2, stream);
+  
+      raft::interruptible::synchronize(stream);
+***************
+*** 164,170 ****
+  
+      num_iters += 1;
+  
+!     delete grads_h;
+  
+    } while (tol_grads < 2 && num_iters < max_epochs);
+  }
+--- 164,170 ----
+  
+      num_iters += 1;
+  
+!     delete[] grads_h;
+  
+    } while (tol_grads < 2 && num_iters < max_epochs);
+  }
+

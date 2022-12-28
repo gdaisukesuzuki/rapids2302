@@ -1,0 +1,13 @@
+*** cuml/cpp/test/sg/shap_kernel.cu-dist	2022-12-13 21:38:18.407382532 +0900
+--- cuml/cpp/test/sg/shap_kernel.cu	2022-12-13 21:40:24.140541856 +0900
+***************
+*** 14,19 ****
+--- 14,21 ----
+   * limitations under the License.
+   */
+  
++ #include <stdint.h>
++ 
+  #include <cuml/explainer/kernel_shap.hpp>
+  
+  #include <test_utils.h>

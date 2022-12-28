@@ -1,0 +1,12 @@
+*** cuspatial/cpp/cmake/thirdparty/CUSPATIAL_GetCUDF.cmake-dist	2022-01-18 21:32:19.802421838 +0900
+--- cuspatial/cpp/cmake/thirdparty/CUSPATIAL_GetCUDF.cmake	2022-01-18 21:35:52.989351754 +0900
+***************
+*** 25,30 ****
+--- 25,31 ----
+      else()
+          set(MAJOR_AND_MINOR "${VERSION}")
+      endif()
++     set(MAJOR_AND_MINOR "23.02")
+  
+      CPMFindPackage(NAME        cudf
+          VERSION                ${VERSION}

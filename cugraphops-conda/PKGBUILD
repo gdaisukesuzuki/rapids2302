@@ -1,0 +1,53 @@
+# Maintainer: Sven-Hendrik Haase <svenstaro@gmail.com>
+# Maintainer: Konstantin Gizdov <arch@kge.pw>
+pkgname=cugraphops-conda
+provides=(cugraphops)
+pkgver=23.02
+pkgrel=0
+pkgdesc=""
+arch=('x86_64')
+url="https://anaconda.org/rapidsai-nightly/libcugraphops/files"
+license=('custom:NVIDIA')
+depends=('cuda' 'rmm')
+# options=(!strip staticlibs)
+# source=(https://anaconda.org/nvidia/libcumlprims/0.19.0/download/linux-64/libcumlprims-0.19.0-cuda11.2_ga2abf9f_0.tar.bz2)
+# source=(https://anaconda.org/nvidia/libcumlprims/21.06.00/download/linux-64/libcumlprims-21.06.00-cuda11.2_gfda2e6c_0.tar.bz2
+# source=(https://anaconda.org/rapidsai-nightly/libcumlprims/21.08.00a210804/download/linux-64/libcumlprims-21.08.00a210804-cuda11.4_g4db0971_5.tar.bz2
+# https://anaconda.org/nvidia/libcumlprims/21.12.00/download/linux-64/libcumlprims-21.12.00-cuda11_g0a7f19f_0.tar.bz2
+source=(
+# https://anaconda.org/rapidsai-nightly/libcugraphops/22.04.00a220331/download/linux-64/libcugraphops-22.04.00a220331-cuda11_ga9f323f_32.tar.bz2
+# https://anaconda.org/nvidia/libcugraphops/22.04.00/download/linux-64/libcugraphops-22.04.00-cuda11_gb44dd3c_0.tar.bz2
+# https://anaconda.org/nvidia/libcugraphops/22.06.00/download/linux-64/libcugraphops-22.06.00-cuda11_gb4e1cbb_0.tar.bz2
+# https://anaconda.org/nvidia/libcugraphops/22.08.00/download/linux-64/libcugraphops-22.08.00-cuda11_g7f764d0_0.tar.bz2
+#https://anaconda.org/nvidia/libcugraphops/22.10.00/download/linux-64/libcugraphops-22.10.00-cuda11_g4257014_0.tar.bz2
+# https://anaconda.org/rapidsai-nightly/libcugraphops/22.12.00a221119/download/linux-64/libcugraphops-22.12.00a221119-cuda11_gfbd98ce_21.tar.bz2
+# https://anaconda.org/rapidsai-nightly/libcugraphops/22.12.00a221123/download/linux-64/libcugraphops-22.12.00a221123-cuda11_g2d38caa_27.tar.bz2
+# https://anaconda.org/rapidsai-nightly/libcugraphops/23.02.00a221201/download/linux-64/libcugraphops-23.02.00a221201-cuda11_g2ae07c7_29.tar.bz2
+# https://anaconda.org/rapidsai-nightly/libcugraphops/23.02.00a221202/download/linux-64/libcugraphops-23.02.00a221202-cuda11_gc10610 4b_30.tar.bz2
+#https://anaconda.org/rapidsai-nightly/libcugraphops/23.02.00a221207/download/linux-64/libcugraphops-23.02.00a221207-cuda11_gcf50ec9_36.tar.bz2
+# https://anaconda.org/rapidsai-nightly/libcugraphops/23.02.00a221215/download/linux-64/libcugraphops-23.02.00a221215-cuda11_g6a57606_38.tar.bz2
+#https://anaconda.org/rapidsai-nightly/libcugraphops/23.02.00a221219/download/linux-64/libcugraphops-23.02.00a221219-cuda11_gf60fcbab_41.tar.bz2
+https://anaconda.org/rapidsai-nightly/libcugraphops/23.02.00a221224/download/linux-64/libcugraphops-23.02.00a221224-cuda11_g4f0facd3_44.tar.bz2
+)
+#"cc.patch" )
+sha512sums=('SKIP' )
+
+
+package() {
+#  patch -p0 < cc.patch
+  local _predir="${srcdir}"
+  cd ${_predir}
+  mkdir -p "${pkgdir}/usr/lib"
+  mkdir -p "${pkgdir}/usr/include"
+  cp -alr include/*  "${pkgdir}/usr/include"
+  cp -alr lib/*  "${pkgdir}/usr/lib"
+  rm -rf  "${pkgdir}/usr/include/rmm"
+  rm -rf  "${pkgdir}/usr/include/rapids"
+  rm -rf  "${pkgdir}/usr/include/raft"
+  rm -rf  "${pkgdir}/usr/include/cuco"
+  rm -rf  "${pkgdir}/usr/lib/cmake/rmm"
+  rm -rf  "${pkgdir}/usr/lib/cmake/raft"
+  rm -rf  "${pkgdir}/usr/lib/cmake/cuco"
+  rm -rf  "${pkgdir}/usr/lib/cmake/libcudacxx"
+  chmod +x "${pkgdir}/usr/lib/libcugraph-ops++.so"
+}

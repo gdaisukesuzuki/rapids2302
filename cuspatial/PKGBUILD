@@ -1,0 +1,153 @@
+# Maintainer: Sven-Hendrik Haase <svenstaro@gmail.com>
+# Contributor: bartus <arch-user-repoᘓbartus.33mail.com>
+# Contributor: bartus <arch-user-repoᘓbartus.33mail.com>
+# Contributor: pingplug <pingplug@foxmail.com>
+# Contributor: cornholio <vigo.the.unholy.carpathian@gmail.com>
+
+pkgname=(cuspatial python-cuspatial)
+_pkgname=cuspatial
+# _pkgname2=hornet
+pkgver=23.02
+_pkgver=22.12.00
+pkgrel=1
+pkgdesc="RAPIDS ML"
+arch=('x86_64')
+url="https://rapids.ai/"
+license=('custom')
+#depends=('rapids-cudf'  'cuda' 'cmake' 'python' 'cython' 'libcypher-parser'  )
+depends=('cudf' 'cuda' 'cmake'  'gdal' )
+# depends=('clang' 'rapids-cudf' 'gcc8' 'cuda' 'cmake' 'nccl' 'python' 'cython' 'libcypher-parser-static')
+# depends=('clang' 'rapids-cudf' 'gcc8' 'cuda' 'cmake' 'nccl' 'python' 'cython' 'libcypher-parser-static' 'hortnet')
+# depends=('clang' 'rapids-cudf' 'gcc8' 'cuda' 'cmake' 'nccl' 'python' 'cython' 'libcypher-parser-static' 'gunrock-static')
+# source=("${_pkgname}::git+https://github.com/rapidsai/cugraph.git"
+# source=("${_pkgname}::git+https://github.com/rapidsai/cuspatial.git#tag=v${_pkgver}"
+source=("${_pkgname}::git+https://github.com/rapidsai/cuspatial.git#branch=branch-${pkgver}"
+# "cu.patch"
+ "cmake.patch" )
+#  "${_pkgname2}::git+https://github.com/hornet-gt/hornet.git#tag=0.19.0")
+
+# sha256sums=( 'SKIP')
+sha256sums=('SKIP' 'SKIP')
+# sha256sums=('SKIP' 'SKIP' 'SKIP' )
+# sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP')
+
+
+
+build() {
+  cd "${srcdir}"
+#  patch -p0 < CMakeLists.txt.patch
+#  patch -p0 < testCmakeLists.txt.patch
+#  rm cugraph/cpp/cmake/Modules/FindNCCL.cmake
+#  patch -p0 < cusparse_helper.cu.patch
+#  patch -p0 < error_utils.h.patch
+#  patch -p0 < renumber.cuh.patch
+#   patch -p0 < setup.py.patch
+#   patch -p0 < cu.patch
+#   patch -p0 < cmake.patch
+
+  cd "${srcdir}/cuspatial"
+  git submodule update --init --remote --recursive
+export REPODIR="${srcdir}"/cuspatial
+export LIBCUSPATIAL_BUILD_DIR=${LIBCUSPATIAL_BUILD_DIR:=${REPODIR}/cpp/build}
+export CUGRAPH_BUILD_DIR=${REPODIR}/python/build
+export BUILD_DIRS="${LIBCUGRAPH_BUILD_DIR} ${CUGRAPH_BUILD_DIR}"
+export VERBOSE_FLAG=""
+export BUILD_TYPE=Release
+export INSTALL_TARGET=install
+export BUILD_DISABLE_DEPRECATION_WARNING=ON
+export BUILD_CPP_MG_TESTS=OFF
+export BUILD_STATIC_FAISS=OFF
+export GPU_ARCH=""
+
+
+
+
+
+# export CXXFLAGS="$CFLAGS"
+
+  export CUDA_HOME=/opt/cuda
+  export CUDA_BIN_PATH=$CUDA_HOME/bin
+  export GPU_ARCHS=86
+   #  -DPARALLEL_LEVEL=6 \
+   # -DENABLE_PROTOBUF=ON \
+    mkdir -p ${LIBCUSPATIAL_BUILD_DIR}
+    cd ${LIBCUSPATIAL_BUILD_DIR}
+# -DCMAKE_CXX11_ABI=ON  \
+    cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
+          -DCMAKE_CUDA_ARCHITECTURES=86 \
+ -DCMAKE_CXX11_ABI=ON  \
+          -DCMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11 \
+          -DBUILD_TESTS=OFF \
+          -DBUILD_BENCHMARKS=OFF \
+          -DCMAKE_C_COMPILER=/usr/bin/gcc \
+          -DCMAKE_CXX_COMPILER=/usr/bin/g++ \
+          -DDISABLE_DEPRECATION_WARNING=${BUILD_DISABLE_DEPRECATION_WARNING} \
+          -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
+          ${REPODIR}/cpp
+        cd ${REPODIR}/cpp/build
+
+        # find . -name 'flags.make' | xargs sed -i -e 's/-DCUDA_API_PER_THREAD_DEFAULT_STREAM/-D_GLIBCXX_USE_CXX11_ABI=0 -DDCUDA_API_PER_THREAD_DEFAULT_STREAM/g'
+        # find . -name 'link.txt' | xargs sed -i -e 's/-lpthread/-lpthread -lspdlog/g'
+        # find . -name 'link.txt' | xargs sed -i -e 's/-lpthread/-lpthread -lfmt -lspdlog/g'
+        # find . -name 'link.txt' | xargs sed -i -e 's/-lpthread/-lpthread -lcudf -lfmt -lspdlog/g'
+        # find . -name 'link.txt' | xargs sed -i -e 's/-lpthread/-lpthread -lgtest -lgmock -lgtest_main -lcudf -lfmt -lspdlog/g'
+export CC=/usr/bin/gcc
+# 
+ export CXX=/usr/bin/g++
+        # make -j$(($(nproc)-2)) VERBOSE=1
+        # cmake --build "${LIBCUGRAPH_BUILD_DIR}" -j$(($(nproc)-2)) --target 
+
+  cd "${srcdir}"/cuspatial/python
+         # env PARALLEL_LEVEL=$(($(nproc)-2)) CUSPATIAL_BUILD_PATH=${CUGRAPH_BUILD_PATH} python setup.py build_ext -j$(($(nproc)-2)) --inplace --library-dir=${LIBCUGRAPH_BUILD_DIR}
+         # env CUGRAPH_BUILD_PATH=${CUGRAPH_BUILD_PATH} python setup.py build_ext $(($(nproc)-2)) --inplace --library-dir=${LIBCUGRAPH_BUILD_DIR}
+
+
+}
+
+package_cuspatial() {
+  cd "${srcdir}"/cuspatial/cpp/build
+  CC=/usr/bin/gcc CXX=/usr/bin/g++ \
+  DESTDIR="${pkgdir}/usr" cmake --build "${srcdir}"/cuspatial/cpp/build -v -j14 --target cuspatial install --verbose
+
+  # make DESTDIR="${pkgdir}"/usr install
+  install -Dm644 ${srcdir}/cuspatial/LICENSE ${pkgdir}/usr/share/licenses/cuspaatial/LICENSE
+  rm -rf "${pkgdir}/usr/include/rapids"
+  rm -rf "${pkgdir}/usr/include/cuco"
+  rm -rf "${pkgdir}/usr/include/rmm"
+  rm -rf "${pkgdir}/usr/include/cudf_test"
+  rm -rf "${pkgdir}/usr/include/cudf"
+  rm -rf "${pkgdir}/usr/include/libcudf"
+  rm -rf "${pkgdir}/usr/include/nvcomp"
+  rm -rf "${pkgdir}/usr/include/nvcomp.h"
+  rm -rf "${pkgdir}/usr/include/nvcomp.hpp"
+  rm -rf "${pkgdir}/usr/lib/cmake/cub"
+  rm -rf "${pkgdir}/usr/lib/cmake/cuco"
+  rm -rf "${pkgdir}/usr/lib/cmake/cudf"
+  rm -rf "${pkgdir}/usr/lib/cmake/nvcomp"
+  rm -rf "${pkgdir}/usr/lib/cmake/rmm"
+  rm -rf "${pkgdir}/usr/lib/libcudf.so"
+  rm -rf "${pkgdir}/usr/lib/libcudftestutil.a"
+# mv cugraph/version_config.hpp cugraph/cugraph/
+# mv cugraph cugraph-old
+# mv cugraph-old/cugraph .
+# mv cugraph-old/raft .
+# rmdir cugraph-old 
+
+}
+
+package_python-cuspatial(){
+      cd ${srcdir}/cuspatial/python/cuspatial
+  CC=/usr/bin/gcc CXX=/usr/bin/g++ \
+      python setup.py build_ext -j${PARALLEL_LEVEL:-1} --inplace -- -DCMAKE_PREFIX_PATH=/usr -DCMAKE_LIBRARY_PATH=${LIBCUSPATIAL_BUILD_DIR}  -DFIND_CUDF_CPP=ON -DCMAKE_CUDA_ARCHITECTURES=86 -DCMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11 VERBOSE=1 -- -j14
+  CC=/usr/bin/gcc CXX=/usr/bin/g++ \
+        python setup.py install --single-version-externally-managed --record=record.txt --prefix=/usr --root="${pkgdir}" --optimize=1 -- -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} -DCMAKE_LIBRARY_PATH=${LIBCUSPATIAL_BUILD_DIR}  -DFIND_CUDF_CPP=ON -DCMAKE_CUDA_ARCHITECTURES=86 -DCMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11
+  # env CUGRAPH_BUILD_PATH=${CUGRAPH_BUILD_PATH} python setup.py install  --prefix=/usr --root="${pkgdir}" --optimize=1
+  rm -rf "${pkgdir}/usr/include"
+  rm -rf "${pkgdir}/usr/lib/cmake"
+  rm -rf "${pkgdir}/usr/lib/libcuspatial.so"
+  install -Dm644 ${srcdir}/cuspatial/LICENSE ${pkgdir}/usr/share/licenses/python-cuspatial/LICENSE
+
+}
+
+
+# vim:set ts=2 sw=2 et:

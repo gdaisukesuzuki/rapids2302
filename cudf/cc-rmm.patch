@@ -1,0 +1,25 @@
+*** rmm/include/rmm/mr/device/arena_memory_resource.hpp-dist	2022-12-06 14:18:13.635213683 +0900
+--- rmm/include/rmm/mr/device/arena_memory_resource.hpp	2022-12-06 14:19:32.563289501 +0900
+***************
+*** 306,315 ****
+    void dump_memory_log(size_t bytes)
+    {
+      logger_->info("**************************************************");
+!     logger_->info("Ran out of memory trying to allocate {}.", rmm::detail::bytes{bytes});
+      logger_->info("**************************************************");
+      logger_->info("Global arena:");
+!     global_arena_.dump_memory_log(logger_);
+      logger_->flush();
+    }
+  
+--- 306,315 ----
+    void dump_memory_log(size_t bytes)
+    {
+      logger_->info("**************************************************");
+!     logger_->info("Ran out of memory trying to allocate {}.", static_cast<int>(bytes));
+      logger_->info("**************************************************");
+      logger_->info("Global arena:");
+!     // global_arena_.dump_memory_log(logger_);
+      logger_->flush();
+    }
+  

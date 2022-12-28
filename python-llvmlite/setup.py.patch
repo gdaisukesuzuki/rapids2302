@@ -1,0 +1,20 @@
+*** llvmlite-0.39.0/ffi/build.py-dist	2022-07-27 22:34:18.242508567 +0900
+--- llvmlite-0.39.0/ffi/build.py	2022-07-27 22:34:37.479457968 +0900
+***************
+*** 162,176 ****
+          print(warning)
+          print(msg)
+          print(warning + '\n')
+-     else:
+  
+-         if not out.startswith('11'):
+-             msg = ("Building llvmlite requires LLVM 11.x.x, got "
+-                    "{!r}. Be sure to set LLVM_CONFIG to the right executable "
+-                    "path.\nRead the documentation at "
+-                    "http://llvmlite.pydata.org/ for more information about "
+-                    "building llvmlite.\n".format(out.strip()))
+-             raise RuntimeError(msg)
+  
+      # Get LLVM information for building
+      libs = run_llvm_config(llvm_config, "--system-libs --libs all".split())
+--- 162,168 ----

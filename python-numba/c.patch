@@ -1,0 +1,18 @@
+*** numba-0.56.4/numba/np/ufunc/_internal.c-dist	2022-12-28 18:29:55.028186782 +0900
+--- numba-0.56.4/numba/np/ufunc/_internal.c	2022-12-28 18:38:28.464776563 +0900
+***************
+*** 326,335 ****
+--- 326,338 ----
+              } else if (strncmp(crnt_name, "reduceat", 9) == 0) {
+                  ufunc_dispatch.ufunc_reduceat =
+                      (PyCFunctionWithKeywords)crnt->ml_meth;
++             } else if (strncmp(crnt_name, "resolve_dtypes", 15) == 0) {
+              } else {
+                  result = -1;
+              }
+              break;
++         case '_':
++             break;
+          default:
+              result = -1; /* Unknown method */
+          }

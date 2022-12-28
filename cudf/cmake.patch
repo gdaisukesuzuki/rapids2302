@@ -1,0 +1,43 @@
+*** cudf/cpp/cmake/thirdparty/get_arrow.cmake-dist	2022-11-03 19:22:09.661557439 +0900
+--- cudf/cpp/cmake/thirdparty/get_arrow.cmake	2022-11-03 19:22:59.169177643 +0900
+***************
+*** 61,69 ****
+      set(ARROW_ARMV8_ARCH "armv8-a")
+    endif()
+  
+!   if(NOT ARROW_SIMD_LEVEL)
+!     set(ARROW_SIMD_LEVEL "NONE")
+!   endif()
+  
+    if(BUILD_STATIC)
+      set(ARROW_BUILD_STATIC ON)
+--- 61,70 ----
+      set(ARROW_ARMV8_ARCH "armv8-a")
+    endif()
+  
+!   # if(NOT ARROW_SIMD_LEVEL)
+!   #   set(ARROW_SIMD_LEVEL "NONE")
+!   # endif()
+!   set(ARROW_SIMD_LEVEL "AVX512")
+  
+    if(BUILD_STATIC)
+      set(ARROW_BUILD_STATIC ON)
+*** cudf/cpp/CMakeLists.txt-dist	2022-12-10 22:26:34.346186839 +0900
+--- cudf/cpp/CMakeLists.txt	2022-12-10 22:26:48.275929562 +0900
+***************
+*** 778,784 ****
+    # Find or install NVBench Temporarily force downloading of fmt because current versions of nvbench
+    # do not support the latest version of fmt, which is automatically pulled into our conda
+    # environments by mamba.
+!   set(CPM_DOWNLOAD_fmt TRUE)
+    include(${rapids-cmake-dir}/cpm/nvbench.cmake)
+    rapids_cpm_nvbench()
+    add_subdirectory(benchmarks)
+--- 778,784 ----
+    # Find or install NVBench Temporarily force downloading of fmt because current versions of nvbench
+    # do not support the latest version of fmt, which is automatically pulled into our conda
+    # environments by mamba.
+!   set(CPM_DOWNLOAD_fmt FALSE)
+    include(${rapids-cmake-dir}/cpm/nvbench.cmake)
+    rapids_cpm_nvbench()
+    add_subdirectory(benchmarks)

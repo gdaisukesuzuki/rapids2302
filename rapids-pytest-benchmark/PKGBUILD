@@ -1,0 +1,32 @@
+# Maintainer: Bruno Pagani <archange@archlinux.org>
+
+_pkg=benchmark
+pkgname=python-rapids-pytest-benchmark
+pkgver=0.0.14
+pkgrel=5
+pkgdesc="Distributed task scheduler for Dask"
+arch=(x86_64)
+url="https://distributed.dask.org/"
+license=(BSD)
+depends=(
+    python-pytest-benchmark
+    python-asvdb
+    python-pynvml
+    python-pygal
+    python-cudf
+)
+
+source=(git+https://github.com/rapidsai/benchmark.git)
+#source=(https://github.com/dask/distributed/archive/${pkgver}/${pkgname}-${pkgver}.tar.gz)
+sha256sums=('SKIP')
+
+build() {
+  cd ${_pkg}/rapids_pytest_benchmark
+  python setup.py build
+}
+
+package() {
+  cd ${_pkg}/rapids_pytest_benchmark
+  python setup.py install --prefix=/usr --root="${pkgdir}" --optimize=1 # --skip-build --with-cython
+  install -Dm644 ../LICENSE -t "${pkgdir}"/usr/share/licenses/${pkgname}/
+}

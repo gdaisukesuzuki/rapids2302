@@ -1,0 +1,279 @@
+# Maintainer: Sven-Hendrik Haase <svenstaro@gmail.com>
+# Contributor: bartus <arch-user-repoᘓbartus.33mail.com>
+# Contributor: pingplug <pingplug@foxmail.com>
+# Contributor: cornholio <vigo.the.unholy.carpathian@gmail.com>
+
+pkgname=(cuml python-cuml)
+_pkgname=cuml
+pkgver=23.02
+_pkgver=22.12.00
+# _pkgver=22.06
+pkgrel=7
+pkgdesc="RAPIDS Memory Manager"
+arch=('x86_64')
+url="https://rapids.ai/"
+license=('custom')
+# depends=(  'faiss' 'cudf' 'nccl'  'cuda' 'cmake' 'boost-libs'  'protobuf')
+# depends=('openucx' 'cumlprims'  'faiss' 'cudf' 'nccl'  'cuda' 'cmake' 'boost-libs'  'protobuf')
+# depends=('openucx'  'faiss' 'cudf' 'nccl'  'cuda' 'cmake' 'boost-libs'  'protobuf')
+depends=('curaft' 'cumlprims' 'treelite' 'faiss' 'cudf' 'nccl'  'cuda' 'cmake' 'boost-libs'  'protobuf')
+# depends=( 'cumlprims' 'treelite' 'cudf' 'nccl' 'cuda' 'cmake' 'boost-libs'  'protobuf'  'faiss')
+# depends=( 'treelite' 'cudf' 'nccl' 'cuda' 'cmake' 'boost-libs'  'protobuf'  'cumlprims')
+# depends=('faiss-cuda' 'cudf' 'nccl' 'cuda' 'cmake' 'boost-libs'  'protobuf' 'treelite' 'cumlprims')
+# depends=('arrow-cuda>=1.0.0' 'nccl' 'cuda' 'cmake' 'rmm' 'dlpack' 'boost-libs'  'protobuf' )
+# depends=('arrow-cuda>=1.0.0' 'nccl' 'cuda' 'cuda-tools' 'cuda-static' 'cmake' 'python-rmm' 'dlpack' 'boost-libs'  'protobuf' )
+# depends=('arrow-cuda<1.0.0' 'python-pyarrow-cuda' 'gcc9' 'cuda' 'cmake' 'rapids-rmm' 'dlpack' 'boost-libs' 'python-dask'  'python-distributed' 'protobuf' 'python-versioneer')
+# depends=('arrow-cudf<0.16.0' 'gcc8' 'cuda' 'cmake' 'rapids-rmm' 'dlpack' 'boost-libs' 'python-dask'  'python-distributed' 'protobuf')
+# makedepends=('python-cmake_setuptools' 'protobuf-static')
+# depends=('arrow-cudf<0.16.0' 'gcc8' 'cuda' 'cmake' 'rapids-rmm' 'dlpack' 'boost-libs')
+# source=("${_pkgname}::git+https://github.com/rapidsai/cudf.git"
+# source=("${_pkgname}::git+https://github.com/rapidsai/cuml.git#tag=v${_pkgver}"
+source=("${_pkgname}::git+https://github.com/rapidsai/cuml.git#branch=branch-${pkgver}"
+"setup.py.patch"
+"cu.patch"
+"test.patch"
+# "https://raw.githubusercontent.com/rapidsai/gputreeshap/main/GPUTreeShap/gpu_treeshap.h"
+)
+# "cc.patch" "cu.patch"  "setup.py.patch" )
+# source=("${_pkgname}::git+https://github.com/rapidsai/cuml.git#branch=branch-${_pkgver}" "cc.patch" "cu.patch" "cmake.patch")
+# source=("${_pkgname}::git+https://github.com/rapidsai/cuml.git#tag=v0.19.0")
+#  "orc.hpp.patch"
+#  "remove_keys.cu.patch"
+#  "from.arrow.cu.patch"
+#  "cudf_setup.py.patch" "gather.cu.patch" "ipc.cpp.patch" "reader_impl.cu.patch")
+#  "cudf_setup.py.patch" "nvst_CMakeLists.txt.patch")
+#  "from_arrow.cpp.patch"
+
+# sha256sums=( 'SKIP' 'SKIP')
+# sha256sums=('SKIP' 'SKIP' 'SKIP')
+# sha256sums=('SKIP')
+sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP')
+
+
+prepare() {
+  cd "${srcdir}"
+
+#  if [ -d ${srcdir}/cumlprims ]; then
+#    rm -rf  ${srcdir}/cumlprims
+#  fi
+
+#  mkdir -p  ${srcdir}/cumlprims
+#  mv ${srcdir}/lib ${srcdir}/cumlprims
+#  mv ${srcdir}/info ${srcdir}/cumlprims
+#  mv ${srcdir}/include ${srcdir}/cumlprims
+
+  patch -p0 < cu.patch
+ # patch -p0 < cc.patch
+#  patch -p0 < cmake.patch
+  patch -p0 < setup.py.patch
+  patch -p0 < test.patch
+
+    find . -name '*.cu*' | xargs sed -i -e 's/raft::Sum<index_t>/raft::add_op/g'
+    find . -name '*.cu*' | xargs sed -i -e 's/raft::Sum<DataT>/raft::add_op/g'
+    find . -name '*.cu*' | xargs sed -i -e 's/raft::Sum<math_t>/raft::add_op/g'
+    find . -name '*.cu*' | xargs sed -i -e 's/raft::Sum<float>/raft::add_op/g'
+    find . -name '*.cu*' | xargs sed -i -e 's/raft::L2Op<DataT>/raft::sq_op/g'
+    find . -name '*.cu*' | xargs sed -i -e 's/raft::Nop<Type,\ IdxType>/raft::identity_op/g'
+    find . -name '*.cu*' | xargs sed -i -e 's/raft::Nop<DataT,\ IdxT>/raft::identity_op/g'
+    find . -name '*.cu*' | xargs sed -i -e 's/raft::Nop<math_t>/raft::identity_op/g'
+    # find . -name '*.cu*' | xargs sed -i -e 's/raft::linalg::mapThenReduce/raft::linalg::mapReduce/g'
+    # find . -name '*.cu*' | xargs sed -i -e 's/raft::random::Rng/raft::random::RngState/g'
+
+    # find . -name '*.cuh' | xargs sed -i -e 's/raft::Nop</raft::identity_op</g'
+#   patch -p0 < nvst_CMakeLists.txt.patch
+#   patch -p0 < gather.cu.patch 
+#   patch -p0 < orc.hpp.patch 
+#  patch -p0 < cpp.patch
+#  patch -p0 < cudf_setup.py.patch
+#  patch -p0 < from_arrow.cpp.patch
+#   patch -p0 < reader_impl.cu.patch
+#   patch -p0 <  from.arrow.cu.patch
+#    patch -p0 < ipc.cpp.patch
+# mv cuml/python/cuml/test/*.py cuml/python/cuml/tests/
+# rmdir cuml/python/cuml/test
+export ENABLE_CUMLPRIMS_MG=ON
+export SINGLEGPU=OFF
+export VERBOSE=1
+export BUILD_TYPE=Release
+export INSTALL_TARGET=install
+export BUILD_ALL_GPU_ARCH=0
+export CUML_EXTRA_PYTHON_ARGS=""
+export NVTX=ON
+export CCACHE=OFF
+export CLEAN=0
+export BUILD_DISABLE_DEPRECATION_WARNING=ON
+export BUILD_CUML_STD_COMMS=ON
+export BUILD_CPP_MG_TESTS=OFF
+# export BUILD_CPP_MG_TESTS=OFF
+# export BUILD_CPP_TESTS=ON
+export BUILD_CPP_TESTS=ON
+# export BUILD_STATIC_FAISS=OFF
+export CMAKE_GENERATOR="Ninja"
+# export SINGLEGPU_CPP_FLAG=OFF
+export SINGLEGPU_CPP_FLAG=OFF
+export LIBCUML_BUILD_DIR="${srcdir}"/cuml/cpp/build
+export CUML_EXTRA_CMAKE_ARGS=""
+export INSTALL_PREFIX=/usr
+export PARALLEL_LEVEL=12
+# export PARALLEL_LEVEL=$(nproc)
+export CUDA_HOME=/opt/cuda
+export CMAKE_LOG_LEVEL=true
+export BUILD_STATIC_FAISS=ON
+export BUILD_STATIC_TREELITE=ON
+# export CC=/usr/bin/gcc-11
+# export CXX=/usr/bin/g++-11
+# export LD=/usr/bin/gcc
+# export RAFT_PATH=/usr
+
+  
+find cuml/python/cuml -name '*.py' | xargs sed -i -e 's/cp.core.core.ndarray/cp._core.core.ndarray/g'
+find cuml/python/cuml -name '*.py' | xargs sed -i -e 's/sklearn.manifold.t_sne/sklearn.manifold/g'
+find cuml -name 'CMakeLists.txt' | xargs sed -i -e 's/treelite::treelite_static/treelite::treelite/g'
+    # find . -name '*.cuh' | xargs sed -i -e 's/<opg\//<cumlprims\/opg\//g'
+    # find . -name '*.hpp' | xargs sed -i -e 's/<opg\//<cumlprims\/opg\//g'
+    # find . -name '*.cu' | xargs sed -i -e 's/<opg\//<cumlprims\/opg\//g'
+    # find . -name '*.cpp' | xargs sed -i -e 's/<opg\//<cumlprims\/opg\//g'
+
+}
+
+build() {
+  cd "${srcdir}/cuml"
+  # ./build.sh clean
+#  ./build.sh --disable_nvtx -v -n libcudf cudf dask_cudf
+
+    export GPU_ARCH=""
+    mkdir -p ${LIBCUML_BUILD_DIR}
+    cd ${LIBCUML_BUILD_DIR}
+
+export LDFLAGS+=" -llapack -lblas -lpthread -lomp -lompd -larcher -lomptarget -lmkl_intel_lp64 -lmkl_core -lmkl_sequential -L/opt/intel/oneapi/mkl/latest/lib/intel64 -L/opt/intel/oneapi/lib/intel64"
+    cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
+          -DCMAKE_CUDA_ARCHITECTURES=86 \
+          -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
+          -DBUILD_CUML_C_LIBRARY=ON \
+          -DENABLE_CUMLPRIMS_MG=ON \
+          -DBUILD_CUML_BENCH=OFF \
+          -DBUILD_CUML_EXAMPLES=OFF \
+          -DSINGLEGPU=${SINGLEGPU_CPP_FLAG} \
+          -DBUILD_CUML_PRIMS_BENCH=OFF \
+          -DBUILD_CUML_TESTS=${BUILD_CPP_TESTS} \
+          -DBUILD_CUML_MPI_COMMS=${BUILD_CPP_MG_TESTS} \
+          -DBUILD_CUML_MG_TESTS=${BUILD_CPP_MG_TESTS} \
+          -DCUML_USE_RAFT_NN=ON \
+          -DCUML_USE_RAFT_DIST=ON \
+          -DNVTX=${NVTX} \
+          -DCUML_ALGORITHMS="ALL" \
+          -DUSE_CCACHE=${CCACHE} \
+          -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON \
+          -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
+          -DCUML_USE_FAISS_STATIC=${BUILD_STATIC_FAISS} \
+          -DCUML_USE_TREELITE_STATIC=${BUILD_STATIC_TREELITE} \
+          -DCMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11 \
+          -DCMAKE_C_COMPILER=/usr/bin/gcc \
+          -DCMAKE_CXX_COMPILER=/usr/bin/g++ \
+          ${CUML_EXTRA_CMAKE_ARGS} \
+  -DCMAKE_CUDA_COMPILE_WHOLE_COMPILATION=ON \
+          ..
+          # -DBUILD_STATIC_FAISS=OFF \
+          # -DCMAKE_CXX_STANDARD=17 \
+#          -DCMAKE_MESSAGE_LOG_LEVEL=${CMAKE_LOG_LEVEL} \
+#  ./build.sh -v -n --singlegpu libcuml
+#    sed -i -e 's/_deps\/treelite-src\/include/_deps\/treelite-build\/include/g' build.ninja
+     sed -i -e 's/-fopenmp=libomp/-fopenmp-simd/g' build.ninja
+    # find . -name compile_commands.json | xargs  sed -i -e 's/-Xcompiler=-fopenmp=libomp//g'
+    # find . -name build.ninja | xargs  sed -i -e 's/-Xcompiler=-fopenmp=libomp//g'
+    # find . -name flags.make | xargs  sed -i -e 's/-Xcompiler=-fopenmp=libomp//g'
+#    sed -i -e 's/MLC_USE_CXX11=1/MLC_USE_CXX11=0/g' compile_commands.json
+#    sed -i -e 's/I_deps\/treelite-src\/include/I_deps\/treelite-src\/include\ -I_deps\/treelite-build\/include/g' compile_commands.json
+   # cmake   --build ${LIBCUML_BUILD_DIR} -v -j10 --target cuml++ cuml ml
+    # patch -p0 < ${srcdir}/raft.patch
+
+   cd "${srcdir}"/cuml/cpp/build
+   # make -k -j12
+#  cp cuml/cpp/build/_deps/treelite-build/include/treelite/version.h cuml/cpp/build/_deps/treelite-src/include/treelite/
+  # patch -p0 < cc.patch
+}
+
+package_cuml() {
+   # provides=('benchmark' 'treelite' 'faiss' 'cuml')
+    cd ${LIBCUML_BUILD_DIR}
+  # cd "${srcdir}"/cuml/cpp/build
+
+# export LDFLAGS="${LDFLAGS} -L/opt/intel/oneapi/mkl/latest/lib/intel64 -lmkl_intel_lp64 -lmkl_core -lmkl_sequential -lomp -lompd -llapack -lblas "
+export LDFLAGS+=" -llapack -lblas -lpthread -lomp -lompd -larcher -lomptarget -lmkl_intel_lp64 -lmkl_core -lmkl_sequential -L/opt/intel/oneapi/mkl/latest/lib/intel64 -L/opt/intel/oneapi/lib/intel64"
+  # make DESTDIR="${pkgdir}" install_cudf
+  DESTDIR="${pkgdir}"  cmake  --build ${LIBCUML_BUILD_DIR}  -v -j15 --target cuml++ cuml  install
+#  DESTDIR="${pkgdir}"  cmake --build ${LIBCUML_BUILD_DIR} -v -j${PARALLEL_LEVEL:-1} --target cuml++ cuml ml prims install
+ rm -rf "${pkgdir}"/home
+ # cmake --build . -j$(nproc) --target install 
+# make  install DESTDIR="${pkgdir}/usr"
+
+  mkdir -p ${pkgdir}/usr/include/GPUTreeShap
+  install -Dm644 ${srcdir}/cuml/cpp/build/_deps/gputreeshap-src/GPUTreeShap/gpu_treeshap.h ${pkgdir}/usr/include/GPUTreeShap
+
+  install -Dm644 ${srcdir}/cuml/LICENSE ${pkgdir}/usr/share/licenses/cuml/LICENSE
+  # rm -rf ${pkgdir}/usr/lib/cmake/rmm
+  rm -rf ${pkgdir}/usr/lib/cmake/cuco
+  # rm -rf ${pkgdir}/usr/lib/cmake/thrust
+  # rm -rf ${pkgdir}/usr/lib/cmake/treelite
+  rm -rf ${pkgdir}/usr/include/rmm
+  rm -rf ${pkgdir}/usr/include/cuco
+  # rm -rf ${pkgdir}/usr/include/thrust
+  rm -rf ${pkgdir}/usr/include/rapids
+  rm -rf ${pkgdir}/usr/include/raft
+  rm -rf ${pkgdir}/usr/lib/libraft_nn.so
+  rm -rf ${pkgdir}/usr/lib/libraft_distance.so
+  # rm -rf ${pkgdir}/usr/lib/cmake/libcudacxx
+  rm -rf ${pkgdir}/usr/lib/cmake/raft
+  # rm -rf ${pkgdir}/usr/lib/cmake/thrust
+  rm -rf ${pkgdir}/usr/lib/cmake/rmm
+  
+  
+  # rm -rf ${pkgdir}/usr/include/treelite
+  # rm -rf ${pkgdir}/usr/lib/libtreelite_runtime.so
+  # rm -rf ${pkgdir}/usr/lib/libtreelite.so
+   if [ ! -d ${pkgdir}/usr/lib/cmake/gputreeshap ]; then
+      cd ${pkgdir}/usr/lib/cmake
+      cp -pr /usr/lib/cmake/gputreeshap .
+      
+      cd ${pkgdir}/usr/include
+      cp -pr /usr/include/GPUTreeShap .
+   fi
+
+
+}
+
+
+package_python-cuml()
+{
+  depends=('python-curaft' 'python-ucx' 'cuml' 'python-faiss' 'python-cudf'  'python-cupy' )
+  # depends=('python-curaft' 'python-ucx' 'cuml' 'python-faiss' 'python-cudf' 'python-treelite' 'python-cupy' )
+  # depends=('python-faiss-cuda' 'python-cudf' 'python-treelite' 'python-cupy')
+  cd "${srcdir}/cuml/python"
+export LDFLAGS+=" -llapack -lblas -lpthread -lomp -lompd -larcher -lomptarget -lmkl_intel_lp64 -lmkl_core -lmkl_sequential -L/opt/intel/oneapi/mkl/latest/lib/intel64 -L/opt/intel/oneapi/lib/intel64"
+  
+#  CUDA_HOME=/opt/cuda LD_LIBRARY_PATH=/opt/cuda/lib64:${LD_LIBRARY_PATH} python setup.py --verbose build_ext -j1 ${CUML_EXTRA_PYTHON_ARGS} install --single-version-externally-managed --record=record.txt --prefix=/usr --root="${pkgdir}" 
+  export LD_LIBRARY_PATH=${pkgdir}/../cuml/usr/lib:$LD_LIBRARY_PATH
+  CC=/usr/bin/gcc CXX=/usr/bin/g++ \
+  CUDAHOSTCXX=/usr/bin/g++-11 CMAKE_CUDA_ARCHITECTURES="NATIVE" \
+  CMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11 \
+ python setup.py build_ext --inplace --  -DCMAKE_CUDA_ARCHITECTURES=86  -DCMAKE_PREFIX_PATH="${pkgdir}"/../cuml/usr -Dcuml_DIR="${pkgdir}"/../cuml/usr/lib/cmake/cuml   -DCMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11 -DFIND_CUML_CPP=ON -- -j12
+        python setup.py install --single-version-externally-managed --record=record.txt --prefix=/usr --root="${pkgdir}"  --  -DCMAKE_PREFIX_PATH="${pkgdir}"/../cuml/usr -Dcuml_DIR="${pkgdir}"/../cuml/usr/lib/cmake/cuml  -DCMAKE_CUDA_ARCHITECTURES=86 -DCMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11 -DFIND_CUML_CPP=ON  -- -j12
+
+
+# CUDA_HOME=/opt/cuda LD_LIBRARY_PATH=/opt/cuda/lib64:${LD_LIBRARY_PATH} python setup.py --verbose build_ext -j14 ${CUML_EXTRA_PYTHON_ARGS} --library-dir=${LIBCUML_BUILD_DIR} install --single-version-externally-managed --record=record.txt --prefix=/usr --root="${pkgdir}" --optimize=1 # -- -DCMAKE_PREFIX_PATH=/usr -DCMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11 -DFIND_RAFT_CPP=ON -DCMAKE_CUDA_ARCHITECTURES=86
+
+  # install -Dm644 ${srcdir}/cudf/cpp/src/utilities/legacy/*.hpp ${pkgdir}/usr/include/cudf/utilities/legacy/
+  install -Dm644 ${srcdir}/cuml/LICENSE ${pkgdir}/usr/share/licenses/python-cuml/LICENSE
+  mkdir -p ${pkgdir}/usr/lib/python3.10/site-packages/cuml
+#  cp -pr cuml/tests ${pkgdir}/usr/lib/python3.10/site-packages/cuml/tests
+  rm -rf ${pkgdir}/usr/lib/libcuml++.so
+  rm -rf ${pkgdir}/usr/lib/cmake/cuml
+  rm -rf ${pkgdir}/usr/lib/cmake/gputreeshap
+  rm -rf ${pkgdir}/usr/include/cuml
+
+}
+
+
+
+
+# vim:set ts=2 sw=2 et:

@@ -1,0 +1,23 @@
+*** cpp/build/_deps/libcudacxx-src/include/cuda/std/detail/__config-dist	2022-12-07 13:11:50.341184044 +0900
+--- cpp/build/_deps/libcudacxx-src/include/cuda/std/detail/__config	2022-12-07 13:13:47.899988432 +0900
+***************
+*** 34,42 ****
+      #ifndef __device__
+          #define __device__
+      #endif
+!     #ifndef __forceinline__
+!         #define __forceinline__
+!     #endif
+  #endif
+  
+  #ifdef _MSC_VER
+--- 34,42 ----
+      #ifndef __device__
+          #define __device__
+      #endif
+! //    #ifndef __forceinline__
+! //        #define __forceinline__
+! //    #endif
+  #endif
+  
+  #ifdef _MSC_VER

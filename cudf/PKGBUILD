@@ -1,0 +1,492 @@
+# Maintainer: Sven-Hendrik Haase <svenstaro@gmail.com>
+# Contributor: bartus <arch-user-repoᘓbartus.33mail.com>
+# Contributor: pingplug <pingplug@foxmail.com>
+# Contributor: cornholio <vigo.the.unholy.carpathian@gmail.com>
+
+pkgname=(cudf  python-cudf)
+_pkgname=cudf
+_pkgname2=rmm
+_pkgname3=kvikio
+_pkgname4=python-ucx
+# pkgver=0.19.2
+pkgver=23.02
+_pkgver=22.10.01
+_pkgver2=3.1.0
+_pkgver3=0.7.0
+_pkgver4=0.28.00
+_pkgver44=0.30
+# _pkgver=22.06
+
+pkgrel=10
+pkgdesc="RAPIDS Memory Manager"
+arch=('x86_64')
+url="https://rapids.ai/"
+license=('custom')
+# depends=('arrow-cuda>=3.0.0' 'nccl' 'cuda' 'cmake' 'boost-libs'  'protobuf' )
+# depends=('nccl' 'cuda' 'cmake' 'boost-libs')
+# depends=('gcc11' 'rmm' 'nccl' 'cuda' 'cmake' 'boost-libs')
+depends=('nvcomp' 'gcc11'  'nccl' 'cuda' 'cmake' 'boost-libs' 'spdlog' 'fmt' 'python-cupy' 'python-zarr' )
+# optdepents=('cuda-cufile')
+# depends=('gcc11' 'nvcomp' 'rmm'  'nccl' 'cuda' 'cmake' 'boost-libs')
+# depends=('nvcomp' 'rmm' 'arrow-cuda'  'nccl' 'cuda' 'cmake' 'boost-libs')
+# depends=('arrow-cuda' 'rmm' 'nccl' 'cuda' 'cmake' 'boost-libs')
+# depends=('arrow-cuda>=1.0.0' 'nccl' 'cuda' 'cmake' 'rmm' 'dlpack' 'boost-libs'  'protobuf' )
+# provides=('cudf' )
+# depends=('arrow-cuda>=1.0.0' 'nccl' 'cuda' 'cuda-tools' 'cuda-static' 'cmake' 'python-rmm' 'dlpack' 'boost-libs'  'protobuf' )
+# depends=('arrow-cuda<1.0.0' 'python-pyarrow-cuda' 'gcc9' 'cuda' 'cmake' 'rapids-rmm' 'dlpack' 'boost-libs' 'python-dask'  'python-distributed' 'protobuf' 'python-versioneer')
+# depends=('arrow-cudf<0.16.0' 'gcc8' 'cuda' 'cmake' 'rapids-rmm' 'dlpack' 'boost-libs' 'python-dask'  'python-distributed' 'protobuf')
+# makedepends=('python-cmake_setuptools' 'protobuf-static')
+# depends=('arrow-cudf<0.16.0' 'gcc8' 'cuda' 'cmake' 'rapids-rmm' 'dlpack' 'boost-libs')
+# source=("${_pkgname}::git+https://github.com/rapidsai/cudf.git#branch=branch-${_pkgver}"
+# source=("${_pkgname}::git+https://github.com/rapidsai/cudf.git"
+# source=("${_pkgname}::git+https://github.com/rapidsai/cudf.git#branch=branch-${_pkgver}"
+# source=("${_pkgname}::git+https://github.com/rapidsai/cudf.git#branch=branch-22.04"
+# source=("${_pkgname}::git+https://github.com/rapidsai/cudf.git#tag=v${_pkgver}"
+source=("${_pkgname}::git+https://github.com/rapidsai/cudf.git#branch=branch-${pkgver}"
+ "cu-test.patch"
+ "cc.patch"
+ "cmake.patch"
+# "https://anaconda.org/rapidsai/libcudf/21.08.02/download/linux-64/libcudf-21.08.02-cuda11.4_gf6d31fa95d_0.tar.bz2"
+# "build.sh.patch"
+#  "bench.patch"
+#  "binop.patch"
+#  "setup.py.patch"
+"git+https://github.com/NVIDIA/NVTX.git#tag=v${_pkgver2}"
+"git+https://github.com/rapidsai/ptxcompiler.git#tag=${_pkgver3}"
+"${_pkgname2}::git+https://github.com/rapidsai/rmm.git#branch=branch-${pkgver}"
+"${_pkgname3}::git+https://github.com/rapidsai/kvikio.git#branch=branch-${pkgver}"
+"${_pkgname4}::git+https://github.com/rapidsai/ucx-py.git#branch=branch-${_pkgver44}"
+#"https://anaconda.org/rapidsai-nightly/cubinlinker/0.2.0/download/linux-64/cubinlinker-0.2.0-py310hf09951c_1.tar.bz2"
+"https://anaconda.org/rapidsai/cubinlinker/0.2.2/download/linux-64/cubinlinker-0.2.2-py310hf09951c_0.conda"
+ "third.patch"
+ "cc-rmm.patch"
+ "python-rmm.patch"
+# "test.patch"
+# "cmake2.patch"
+)
+# "${_pkgname4}::git+https://github.com/rapidsai/ucx-py.git#tag=v${_pkgver4}"
+
+#  "orc.hpp.patch"
+#  "remove_keys.cu.patch"
+#  "from.arrow.cu.patch"
+#  "cudf_setup.py.patch" "gather.cu.patch" "ipc.cpp.patch" "reader_impl.cu.patch")
+#  "cudf_setup.py.patch" "nvst_CMakeLists.txt.patch")
+#  "from_arrow.cpp.patch"
+
+# sha256sums=('SKIP' 'SKIP')
+# sha256sums=('SKIP')
+# sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP')
+sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP')
+# sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP')
+#sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP')
+# sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP')
+# sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP')
+# sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP')
+# sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP')
+options=('staticlibs')
+
+
+prepare() {
+  cd "${srcdir}"
+ if [ -d ${srcdir}/cubinlinker ]; then
+   rm -rf  ${srcdir}/cubinlinker
+ fi
+
+   mkdir -p  ${srcdir}/cubinlinker
+   
+   mv -f cubinlinker-0.2.2-py310hf09951c_0.conda cubinlinker-0.2.2-py310hf09951c_0.zip
+   unzip -o cubinlinker-0.2.2-py310hf09951c_0.zip
+   cd  ${srcdir}/cubinlinker
+   
+   tar xvf ../info-cubinlinker-0.2.2-py310hf09951c_0.tar.zst
+   tar xvf ../pkg-cubinlinker-0.2.2-py310hf09951c_0.tar.zst
+#  mv ${srcdir}/lib ${srcdir}/cubinlinker
+#  mv ${srcdir}/info ${srcdir}/cubinlinker
+#  mv ${srcdir}/bin ${srcdir}/cubinlinker
+
+
+  cd "${srcdir}"/cudf
+git submodule update --init --recursive
+  cd "${srcdir}"
+ patch -p0 < cu-test.patch
+# patch -p0 < cc.patch
+# patch -p0 < third.patch
+# patch -p0 < binop.patch
+#  patch -p0 < build.sh.patch
+  patch -p0 < cmake.patch
+  # patch -p0 < cmake2.patch
+#  patch -p0 < test.patch
+#  patch -p0 < setup.py.patch
+#   patch -p0 < nvst_CMakeLists.txt.patch
+#   patch -p0 < gather.cu.patch 
+#   patch -p0 < orc.hpp.patch 
+#  patch -p0 < cpp.patch
+#  patch -p0 < cudf_setup.py.patch
+#  patch -p0 < from_arrow.cpp.patch
+#   patch -p0 < reader_impl.cu.patch
+#   patch -p0 <  from.arrow.cu.patch
+##     patch -p0 < ipc.cpp.patch
+  patch -p0 < cc-rmm.patch
+  # cp rmm/cmake/thirdparty/get_spdlog.cmake rmm/cmake/thirdparty/get_thrust.cmake
+  # ls rmm/cmake/thirdparty/get_thrust.cmake | xargs sed -i -e 's/spdlog/thrust/g' 
+  # rm rmm/cmake/thirdparty/get_thrust.cmake
+
+#  find . -name get_arrow.cmake | xargs  sed -i -e 's/arrow_shared/Arrow\:\:arrow_shared/g' 
+#  find . -name get_arrow.cmake | xargs  sed -i -e 's/cudf\:\:Arrow\:\:arrow_shared/cudf\:\:arrow_shared/g' 
+#  find . -name get_arrow.cmake | xargs  sed -i -e 's/arrow_static/Arrow\:\:arrow_static/g' 
+#  find . -name get_arrow.cmake | xargs  sed -i -e 's/cudf\:\:Arrow\:\:arrow_static/cudf\:\:arrow_static/g' 
+
+export CC=/usr/bin/gcc
+export CXX=/usr/bin/g++
+    export SNAPPY_INCLUDE_DIRS=/usr/include
+    export OPENSSL_ROOT_DIR=/usr
+    export LIB_CUDF_BUILD_DIR="${srcdir}"/cudf/cpp/build
+  export CXXFLAGS="${CXXFLAGS} -std=c++17"
+  export LANG=C
+
+}
+
+build() {
+
+
+#  ./build.sh -v -n rmm
+ cd "${srcdir}"/rmm
+  git submodule update --init --remote --recursive
+#  mkdir build
+        cmake -DCMAKE_INSTALL_PREFIX="/usr" \
+              -DCUDA_STATIC_RUNTIME=OFF \
+              -Dthrust_DIR=/usr \
+              -DBUILD_TESTS=OFF \
+              -DBUILD_BENCHMARKS=OFF \
+              -DCMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11 \
+          -DCMAKE_C_COMPILER=/usr/bin/gcc  \
+          -DCMAKE_CXX_COMPILER=/usr/bin/g++ \
+              -DCMAKE_CUDA_ARCHITECTURES=86 \
+              -DPER_THREAD_DEFAULT_STREAM=OFF \
+              -DCMAKE_BUILD_TYPE=Release -S "${srcdir}"/rmm  -B "${srcdir}"/rmm/build 
+
+    cd "${srcdir}"/rmm/build
+  make  -j12 -C .   VERBOSE=1
+
+ cd "${srcdir}"/kvikio
+git submodule update --init --recursive
+#  mkdir build
+        cmake -DCMAKE_INSTALL_PREFIX="/usr" \
+              -DCUDA_STATIC_RUNTIME=OFF \
+              -Dthrust_DIR=/usr \
+              -DBUILD_TESTS=OFF \
+              -DBUILD_BENCHMARKS=OFF \
+              -DCMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11 \
+          -DCMAKE_C_COMPILER=/usr/bin/gcc  \
+          -DCMAKE_CXX_COMPILER=/usr/bin/g++ \
+              -DCMAKE_CUDA_ARCHITECTURES=86 \
+              -DPER_THREAD_DEFAULT_STREAM=OFF \
+              -DCMAKE_BUILD_TYPE=Release -B "${srcdir}"/kvikio/cpp/build -S "${srcdir}"/kvikio/cpp
+    cd "${srcdir}"/kvikio/cpp/build
+  make  -j12 -C .   VERBOSE=1
+
+
+  cd "${srcdir}/cudf"
+#    ./build.sh clean
+#  ./build.sh --disable_nvtx -v -n libcudf cudf dask_cudf
+# PARALLEL_LEVEL=3 ./build.sh -v -n libcudf 
+#  -DCMAKE_CXX_STANDARD="14" \
+#  -DCMAKE_CXX_STANDARD_REQUIRED=ON \
+#  -DCMAKE_CXX_EXTENSIONS=OFF \ 
+   export PARALLEL_LEVEL=10
+
+  CC=gcc \
+  CXX=g++ \
+  DOUBLE_CONVERSION_HOME=/usr \
+    cmake -S "${srcdir}"/cudf/cpp -B "${srcdir}"/cudf/cpp/build \
+          -DCMAKE_INSTALL_PREFIX="/usr" \
+          -DCMAKE_CUDA_ARCHITECTURES=86 \
+          -DCMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11 \
+          -DCMAKE_C_COMPILER=/usr/bin/gcc  \
+          -DCMAKE_CXX_COMPILER=/usr/bin/g++ \
+          -DOPENSSL_CRYPTO_LIBRARY=/usr/lib/libcrypto.so \
+              -DThrust_DIR=/usr \
+          -DUSE_NVTX=ON \
+          -DBUILD_TESTS=OFF \
+          -DBUILD_BENCHMARKS=OFF \
+          -DDISABLE_DEPRECATION_WARNING=ON \
+                -DCUDF_USE_PROPRIETARY_NVCOMP=ON \
+                -DCUDF_ENABLE_ARROW_S3=OFF \
+         -DCMAKE_CXX_STANDARD=17 \
+          -DCUDF_USE_PER_THREAD_DEFAULT_STREAM=ON \
+           -DCUDF_VERSION_Arrow=10.0.1 \
+          -DCMAKE_BUILD_TYPE=Release -DFIND_CUDF_CPP=ON \
+          -Drmm_DIR="${srcdir}"/rmm/build -Dkvikio_DIR="${srcdir}"/kvikio/cpp/build
+          # -DCUDF_USE_ARROW_STATIC=ON \
+             #   -DBUILD_SHARED_LIBS=OFF && \
+
+    if [ -f cpp/build/_deps/libcudacxx-src/include/cuda/std/detail/__config ]; then
+      wckekka=$(grep "//    #ifndef __forceinline__" cpp/build/_deps/libcudacxx-src/include/cuda/std/detail/__config  | wc -l)
+      if [ $wckekka le 0 ]; then
+        patch -p0 < ../third.patch
+      fi
+    fi
+
+    
+    cd "${srcdir}"/cudf/cpp/build
+    find . -name flags.make | xargs  sed -i -e 's/--generate-code=arch=compute_60,code=\[sm_60\] --generate-code=arch=compute_70,code=\[sm_70\] --generate-code=arch=compute_75,code=\[sm_75\] --generate-code=arch=compute_80,code=\[sm_80\]/--generate-code=arch=compute_86,code=\[sm_86\]/g'
+    find . -name flags.make | xargs  sed -i -e 's/--generate-code=arch=compute_60,code=\[compute_60,sm_60\] --generate-code=arch=compute_70,code=\[sm_70\] --generate-code=arch=compute_75,code=\[sm_75\] --generate-code=arch=compute_80,code=\[compute_80,sm_80\]/--generate-code=arch=compute_86,code=\[sm_86\]/g'
+
+  make  -j14 -C .   VERBOSE=1
+  # cmake --build . -j$(nproc) -v
+  # cd "${srcdir}"/cudf/cpp/build/_deps/rmm-src/include
+  # rm -rf rm
+
+  # cp -pr /usr/include/rmm .
+
+  # patch -p0 < bench.patch
+
+#  ./build.sh -v -n libcudf # cudf
+#   ./build.sh -v -n libcudf
+#  ./build.sh -v -n libcudf
+
+}
+
+package_cudf() {
+  provides=('nvtx' 'cudf' 'rmm' 'kvikio')
+  cd "${srcdir}"/rmm/build
+  make  -j12 -C .  DESTDIR="${pkgdir}" install VERBOSE=1
+  cd "${srcdir}"/kvikio/cpp/build
+  make  -j12 -C .  DESTDIR="${pkgdir}" install VERBOSE=1
+  cd "${srcdir}"/cudf/cpp/build
+  make  -j12 -C .  DESTDIR="${pkgdir}" install VERBOSE=1
+
+  # make DESTDIR="${pkgdir}" install_cudf
+  export PARALLEL_LEVEL=12
+  # export CUB_NS_QUALIFIER="::cub"
+
+  # cmake --build . -j1 --target install DESTDIR="${pkgdir}"  -v
+  # make  install DESTDIR="${pkgdir}/usr"
+  # cmake --build . -j$(nproc) --target install DESTDIR="${pkgdir}"  -v
+  # cmake --build . -j1 --target install DESTDIR="${pkgdir}"  -v
+#  cd "${srcdir}"/cudf/python/cudf
+  # CUDA_HOME=/opt/cuda LD_LIBRARY_PATH=/opt/cuda/lib64:${LD_LIBRARY_PATH} python setup.py build_ext -j${PARALLEL_LEVEL:-1} --library-dir=${srcdir}/cudf/cpp/build install --single-version-externally-managed --record=record.txt --prefix=/usr --root="${pkgdir}"
+
+  make  -j12 -C .  DESTDIR="${pkgdir}" install VERBOSE=1
+
+
+  install -Dm644 ${srcdir}/cudf/LICENSE ${pkgdir}/usr/share/licenses/cudf/LICENSE
+  mkdir -p ${pkgdir}/usr/include/dlpack
+  install -Dm644 ${srcdir}/cudf/cpp/build/_deps/dlpack-src/include/dlpack/dlpack.h ${pkgdir}/usr/include/dlpack
+  # mkdir -p ${pkgdir}/usr/include/cuco
+  # install -Dm644 ${srcdir}/cudf/cpp/build/_deps/dlpack-src/include/dlpack/dlpack.h ${pkgdir}/usr/include/dlpack
+
+  # rm -rf ${pkgdir}/usr/lib/cmake/rmm
+  # rm -rf ${pkgdir}/usr/include/rmm
+  # rm -rf ${pkgdir}/usr/include/libcudf
+  # rm -rf ${pkgdir}/usr/include/rapids
+  # rm -rf ${pkgdir}/usr/include/rapids/thrust
+  # mv ${pkgdir}/usr/include/rapids/thrust ${pkgdir}/usr/include/rapids/dummy
+  # mv ${pkgdir}/usr/include/rapids/dummy/thrust ${pkgdir}/usr/include/rapids/thrust
+  # rmdir ${pkgdir}/usr/include/rapids/dummy
+   rm -rf ${pkgdir}/usr/include/gdeflate
+   rm -rf ${pkgdir}/usr/include/nvcomp
+   rm -rf ${pkgdir}/usr/include/nvcomp.h
+   rm -rf ${pkgdir}/usr/include/nvcomp.hpp
+  
+  # rm -rf ${pkgdir}/usr/include/rapids/thrust
+  # rm -rf ${pkgdir}/usr/include/cuco
+  rm -rf ${pkgdir}/usr/lib/cmake/nvcomp
+  # rm -rf ${pkgdir}/usr/lib/cmake/cuco
+  # rm -rf ${pkgdir}/usr/lib/cmake/cub
+  # rm -rf ${pkgdir}/usr/lib/cmake/libcudacxx
+  # rm -rf ${pkgdir}/usr/lib/cmake/thrust
+  rm ${pkgdir}/usr/lib/libnvcomp.so
+  rm ${pkgdir}/usr/lib/libnvcomp_bitcomp.so
+  rm ${pkgdir}/usr/lib/libnvcomp_gdeflate.so
+  rm ${pkgdir}/usr/lib/libnvcomp_gdeflate_cpu.so
+  # install -Dm755 ${srcdir}/lib/libcudf.so ${pkgdir}/usr/lib
+  # install -Dm644 ${srcdir}/lib/libcudftestutil.a ${pkgdir}/usr/lib
+   if [ ! -d ${pkgdir}/usr/include/rapids ]; then
+     mkdir -p ${pkgdir}/usr/include/rapids
+   fi
+
+   if [ ! -d ${pkgdir}/usr/lib/cmake/cub ]; then
+     cd ${pkgdir}/usr/lib/cmake
+     cp -pr /usr/lib/cmake/cub .
+     cd ${pkgdir}/usr/include/rapids
+     cp -pr /usr/include/rapids/cub .
+   fi
+
+   if [ ! -d ${pkgdir}/usr/lib/cmake/thrust ]; then
+      cd ${pkgdir}/usr/lib/cmake
+     cp -pr /usr/lib/cmake/thrust .
+      cd ${pkgdir}/usr/include/rapids
+      cp -pr /usr/include/rapids/thrust .
+   fi
+
+   # if [ ! -d ${pkgdir}/usr/lib/cmake/cub ]; then
+   #   cd ${pkgdir}/usr/lib/cmake
+   #   cp -pr /usr/lib/cmake/cub .
+   #   cd ${pkgdir}/usr/include/rapids
+   #   cp -pr /usr/include/rapids/cub .
+   # fi
+
+   # if [ ! -d ${pkgdir}/usr/lib/cmake/thrust ]; then
+   #    cd ${pkgdir}/usr/lib/cmake
+   #    cp -pr /usr/lib/cmake/thrust .
+   #    cd ${pkgdir}/usr/include/rapids
+   #    cp -pr /usr/include/rapids/thrust .
+   # fi
+
+   # if [ ! -d ${pkgdir}/usr/lib/cmake/rmm ]; then
+   #    cd ${pkgdir}/usr/lib/cmake
+   #    cp -pr /usr/lib/cmake/rmm .
+   #    cd ${pkgdir}/usr/include
+   #    cp -pr /usr/include/rmm .
+   # fi
+
+   if [ ! -d ${pkgdir}/usr/lib/cmake/libcudacxx ]; then
+      cd ${pkgdir}/usr/lib/cmake
+      cp -pr /usr/lib/cmake/libcudacxx .
+      cd ${pkgdir}/usr/include/rapids
+      cp -pr /usr/include/rapids/libcudacxx .
+   fi
+
+   # if [ ! -d ${pkgdir}/usr/lib/cmake/nvcomp ]; then
+   #    cd ${pkgdir}/usr/lib
+   #    cp -pr /usr/lib/libnvcomp*.so .
+   #    cd ${pkgdir}/usr/lib/cmake
+   #    cp -pr /usr/lib/cmake/nvcomp .
+   #    cd ${pkgdir}/usr/include
+   #    cp -pr /usr/include/nvcomp .
+   # fi
+
+
+}
+
+
+package_python-cudf()
+{
+  provides=('python-cudf' 'python-nvtx' 'python-ucx' )
+  # depends=('cudf' 'python-cupy' 'python-rmm' 'python-dask-cuda' 'python-kvikio' 'python-nvtx' )
+  depends=( 'cudf' 'python-cupy'  'python-pyarrow' 'python-dask-cuda' 'python-versioneer' )
+
+  cd "${srcdir}"/cubinlinker
+ 
+  mkdir -p "${pkgdir}/usr/lib"
+  cp -alr lib/*  "${pkgdir}/usr/lib"
+
+  export PARALLEL_LEVEL=12
+  export LD_LIBRARY_PATH="${pkgdir}"/../cudf/usr/lib:/opt/cuda/lib64:$LD_LIBRARY_PATH
+  cd "${srcdir}"/ptxcompiler
+  git submodule update --init --remote --recursive
+  CC=/usr/bin/gcc CXX=/usr/bin/g++ \
+  CMAKE_CUDA_ARCHITECTURES=86 \
+  CMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11 \
+  CUDAHOSTCXX=/usr/bin/g++-11 \
+    python setup.py build_ext --inplace # --  -DCMAKE_PREFIX_PATH=/usr -DCMAKE_CUDA_ARCHITECTURES=86  -DCMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11
+  CC=/usr/bin/gcc CXX=/usr/bin/g++ \
+    python setup.py install --single-version-externally-managed --record=record.txt --prefix=/usr --root="${pkgdir}"  --optimize=1 # --  -DCMAKE_PREFIX_PATH=/usr -DCMAKE_CURA_ARCHITECTURES=86 -DCMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11
+
+
+  # if [ -d "${srcdir}"/cudf/cpp/build/_deps/rmm-src/python ]; then
+  #   cd "${srcdir}"/cudf/cpp/build/_deps/rmm-src/python
+  #   CC=/usr/bin/gcc CXX=/usr/bin/g++ \
+  #   CMAKE_CUDA_ARCHITECTURES=86 \
+  #   CMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11 \
+  #   CUDAHOSTCXX=/usr/bin/g++-11 \
+  #   python setup.py build_ext --inplace -- -DFIND_RMM_CPP=ON -DCMAKE_PREFIX_PATH=/usr -DCMAKE_CUDA_ARCHITECTURES=86  -DCMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11
+  #   python setup.py install --single-version-externally-managed --record=record.txt --prefix=/usr --root="${pkgdir}"   --optimize=1 -- -DFIND_RMM_CPP=ON -DCMAKE_PREFIX_PATH=/usr -DCMAKE_CURA_ARCHITECTURES=86 -DCMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11
+  # else
+  #    cd ${pkgdir}/usr/lib/python3.10/site-packages
+  #    cp -pr /usr/lib/python3.10/site-packages/rmm* .
+  # fi
+  cd "${srcdir}"/rmm/python
+  export LD_LIBRARY_PATH=/opt/cuda/lib64:$LD_LIBRARY_PATH
+  CC=/usr/bin/gcc CXX=/usr/bin/g++ \
+  CMAKE_CUDA_ARCHITECTURES=86 \
+  CMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11 \
+  CUDAHOSTCXX=/usr/bin/g++-11 \
+    python setup.py build_ext --inplace -- -DFIND_RMM_CPP=ON -DCMAKE_PREFIX_PATH=/usr -DCMAKE_CUDA_ARCHITECTURES=86  -DCMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11
+  CC=/usr/bin/gcc CXX=/usr/bin/g++ \
+    python setup.py install --single-version-externally-managed --record=record.txt --prefix=/usr --root="${pkgdir}"  -- -DFIND_RMM_CPP=ON -DCMAKE_PREFIX_PATH=/usr -DCMAKE_CUDA_ARCHITECTURES=86 -DCMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11
+
+  cd "${srcdir}"/kvikio/python
+  export LD_LIBRARY_PATH=/opt/cuda/lib64:$LD_LIBRARY_PATH
+  CC=/usr/bin/gcc CXX=/usr/bin/g++ \
+  CMAKE_CUDA_ARCHITECTURES=86 \
+  CMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11 \
+  CUDAHOSTCXX=/usr/bin/g++-11 \
+    python setup.py build_ext --inplace -- -DFIND_RMM_CPP=ON -DCMAKE_PREFIX_PATH=/usr -DCMAKE_CUDA_ARCHITECTURES=86  -DCMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11
+  CC=/usr/bin/gcc CXX=/usr/bin/g++ \
+    python setup.py install --single-version-externally-managed --record=record.txt --prefix=/usr --root="${pkgdir}"  -- -DFIND_RMM_CPP=ON -DCMAKE_PREFIX_PATH=/usr -DCMAKE_CUDA_ARCHITECTURES=86 -DCMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11
+
+  cd "${srcdir}"/cudf/python/cudf
+  
+  PYTHONPATH="${pkgdir}"/usr/lib/python3.10/site-packages \
+  CC=/usr/bin/gcc CXX=/usr/bin/g++ \
+  CMAKE_CUDA_ARCHITECTURES=86 \
+  CMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11 \
+  CUDAHOSTCXX=/usr/bin/g++-11 \
+PARALLEL_LEVEL=${PARALLEL_LEVEL} python setup.py build_ext --inplace -- -Dnvcomp_DIR="${pkgdir}"/../cudf/usr/lib/cmake/nvcomp -Dcudf_DIR="${pkgdir}"/../cudf/usr/lib/cmake/cudf -DCMAKE_PREFIX_PATH="${pkgdir}"/../cudf/usr   -DFIND_CUDF_CPP=ON -DCMAKE_CUDA_ARCHITECTURES=86 -DCMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11 -- -j${PARALLEL_LEVEL:-1}
+# PARALLEL_LEVEL=${PARALLEL_LEVEL} python setup.py build_ext --inplace -- -Dnvcomp_DIR="${pkgdir}"/../cudf/usr/lib/cmake/nvcomp -Drmm_DIR="${pkgdir}"/../cudf/usr/lib/cmake/rmm -Dcudf_DIR="${pkgdir}"/../cudf/usr/lib/cmake/cudf -DCMAKE_PREFIX_PATH="${pkgdir}"/../cudf/usr   -DFIND_CUDF_CPP=ON -DCMAKE_CUDA_ARCHITECTURES=86 -DCMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11 -- -j${PARALLEL_LEVEL:-1}
+  PYTHONPATH="${pkgdir}"/usr/lib/python3.10/site-packages \
+  CC=/usr/bin/gcc CXX=/usr/bin/g++ \
+  CMAKE_CUDA_ARCHITECTURES=86 \
+  CMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11 \
+  CUDAHOSTCXX=/usr/bin/g++-11 \
+  python setup.py install  --single-version-externally-managed --record=record.txt --prefix=/usr --root="${pkgdir}" --optimize=1  --  -Dnvcomp_DIR="${pkgdir}"/../cudf/usr/lib/cmake/nvcomp -Dcudf_DIR="${pkgdir}"/../cudf/usr/lib/cmake/cudf -DCMAKE_PREFIX_PATH="${pkgdir}"/../cudf/usr   -DFIND_CUDF_CPP=ON -DCMAKE_CUDA_ARCHITECTURES=86 -DCMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11 #  -- -j${PARALLEL_LEVEL:-1}
+  # python setup.py install  --single-version-externally-managed --record=record.txt --prefix=/usr --root="${pkgdir}" --optimize=1  --  -Dnvcomp_DIR="${pkgdir}"/../cudf/usr/lib/cmake/nvcomp -Drmm_DIR="${pkgdir}"/../cudf/usr/lib/cmake/rmm -Dcudf_DIR="${pkgdir}"/../cudf/usr/lib/cmake/cudf -DCMAKE_PREFIX_PATH="${pkgdir}"/../cudf/usr   -DFIND_CUDF_CPP=ON -DCMAKE_CUDA_ARCHITECTURES=86 -DCMAKE_CUDA_HOST_COMPILER=/usr/bin/g++ #  -- -j${PARALLEL_LEVEL:-1}
+
+
+  cd "${srcdir}"/cudf/python/dask_cudf
+  PYTHONPATH="${pkgdir}"/usr/lib/python3.10/site-packages \
+  CC=/usr/bin/gcc CXX=/usr/bin/g++ \
+      PARALLEL_LEVEL=${PARALLEL_LEVEL} python setup.py build_ext --inplace -j${PARALLEL_LEVEL}
+  PYTHONPATH="${pkgdir}"/usr/lib/python3.10/site-packages \
+  CC=/usr/bin/gcc CXX=/usr/bin/g++ \
+  python setup.py install --single-version-externally-managed --record=record.txt --prefix=/usr --root="${pkgdir}" --optimize=1 
+
+  cd "${srcdir}"/python-ucx
+  PYTHONPATH="${pkgdir}"/usr/lib/python3.10/site-packages \
+  CC=/usr/bin/gcc CXX=/usr/bin/g++ \
+      PARALLEL_LEVEL=${PARALLEL_LEVEL} python setup.py build_ext --inplace -j${PARALLEL_LEVEL}
+  PYTHONPATH="${pkgdir}"/usr/lib/python3.10/site-packages \
+  CC=/usr/bin/gcc CXX=/usr/bin/g++ \
+  python setup.py install --single-version-externally-managed --record=record.txt --prefix=/usr --root="${pkgdir}" --optimize=1 
+
+  cd "${srcdir}"/cudf/python/strings_udf
+  
+  PYTHONPATH="${pkgdir}"/usr/lib/python3.10/site-packages \
+  CC=/usr/bin/gcc CXX=/usr/bin/g++ \
+  CMAKE_CUDA_ARCHITECTURES=86 \
+  CMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11 \
+  CUDAHOSTCXX=/usr/bin/g++-11 \
+PARALLEL_LEVEL=${PARALLEL_LEVEL} python setup.py build_ext --inplace -- -Dnvcomp_DIR="${pkgdir}"/../cudf/usr/lib/cmake/nvcomp -Dcudf_DIR="${pkgdir}"/../cudf/usr/lib/cmake/cudf -DCMAKE_PREFIX_PATH="${pkgdir}"/../cudf/usr   -DFIND_CUDF_CPP=ON -DCMAKE_CUDA_ARCHITECTURES=86 -DCMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11 -- -j${PARALLEL_LEVEL:-1}
+# PARALLEL_LEVEL=${PARALLEL_LEVEL} python setup.py build_ext --inplace -- -Dnvcomp_DIR="${pkgdir}"/../cudf/usr/lib/cmake/nvcomp -Drmm_DIR="${pkgdir}"/../cudf/usr/lib/cmake/rmm -Dcudf_DIR="${pkgdir}"/../cudf/usr/lib/cmake/cudf -DCMAKE_PREFIX_PATH="${pkgdir}"/../cudf/usr   -DFIND_CUDF_CPP=ON -DCMAKE_CUDA_ARCHITECTURES=86 -DCMAKE_CUDA_HOST_COMPILER=/usr/bin/g++ -- -j${PARALLEL_LEVEL:-1}
+  PYTHONPATH="${pkgdir}"/usr/lib/python3.10/site-packages \
+  CC=/usr/bin/gcc CXX=/usr/bin/g++ \
+  CMAKE_CUDA_ARCHITECTURES=86 \
+  CMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11 \
+  CUDAHOSTCXX=/usr/bin/g++-11 \
+  python setup.py install  --single-version-externally-managed --record=record.txt --prefix=/usr --root="${pkgdir}" --optimize=1  --  -Dnvcomp_DIR="${pkgdir}"/../cudf/usr/lib/cmake/nvcomp -Dcudf_DIR="${pkgdir}"/../cudf/usr/lib/cmake/cudf -DCMAKE_PREFIX_PATH="${pkgdir}"/../cudf/usr   -DFIND_CUDF_CPP=ON -DCMAKE_CUDA_ARCHITECTURES=86 -DCMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11  -- -j${PARALLEL_LEVEL:-1}
+  # python setup.py install  --single-version-externally-managed --record=record.txt --prefix=/usr --root="${pkgdir}" --optimize=1  --  -Dnvcomp_DIR="${pkgdir}"/../cudf/usr/lib/cmake/nvcomp -Drmm_DIR="${pkgdir}"/../cudf/usr/lib/cmake/rmm -Dcudf_DIR="${pkgdir}"/../cudf/usr/lib/cmake/cudf -DCMAKE_PREFIX_PATH="${pkgdir}"/../cudf/usr   -DFIND_CUDF_CPP=ON -DCMAKE_CUDA_ARCHITECTURES=86 -DCMAKE_CUDA_HOST_COMPILER=/usr/bin/g++  -- -j${PARALLEL_LEVEL:-1}
+
+  cd "${srcdir}"/NVTX/python
+  CMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11 \
+  CMAKE_CUDA_ARCHITECTURES=86 \
+  CC=/usr/bin/gcc CXX=/usr/bin/g++ \
+  python setup.py build_ext
+  CMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11 \
+  CMAKE_CUDA_ARCHITECTURES=86 \
+  CC=/usr/bin/gcc CXX=/usr/bin/g++ \
+  python setup.py install  --single-version-externally-managed --record=record.txt --prefix=/usr --root="${pkgdir}" --optimize=1
+
+  # install -Dm644 ${srcdir}/cudf/cpp/src/utilities/legacy/*.hpp ${pkgdir}/usr/include/cudf/utilities/legacy/
+  install -Dm644 ${srcdir}/cudf/LICENSE ${pkgdir}/usr/share/licenses/python-cudf/LICENSE
+  rm -rf ${pkgdir}/usr/lib/python3.10/site-packages/ci
+  rm -rf ${pkgdir}/usr/lib/python3.10/site-packages/conda
+  rm -rf ${pkgdir}/usr/include
+  rm -rf ${pkgdir}/usr/lib/cmake
+  rm -rf ${pkgdir}/usr/info
+  rm -rf ${pkgdir}/usr/lib/libnvcomp*
+}
+
+
+# vim:set ts=2 sw=2 et:

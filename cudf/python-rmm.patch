@@ -1,0 +1,64 @@
+*** rmm/python/setup.py-dist	2022-01-25 08:55:21.910160078 +0900
+--- rmm/python/setup.py	2022-01-25 08:57:52.194035590 +0900
+***************
+*** 97,103 ****
+              cuda_lib_dir,
+              os.path.join(os.sys.prefix, "lib"),
+          ],
+!         libraries=["cuda", "cudart"],
+          language="c++",
+          extra_compile_args=["-std=c++17"],
+      ),
+--- 97,103 ----
+              cuda_lib_dir,
+              os.path.join(os.sys.prefix, "lib"),
+          ],
+!         libraries=["cuda", "cudart", 'spdlog', 'fmt'],
+          language="c++",
+          extra_compile_args=["-std=c++17"],
+      ),
+***************
+*** 111,117 ****
+              cuda_lib_dir,
+              os.path.join(os.sys.prefix, "lib"),
+          ],
+!         libraries=["cuda", "cudart"],
+          language="c++",
+          extra_compile_args=["-std=c++17"],
+      ),
+--- 111,117 ----
+              cuda_lib_dir,
+              os.path.join(os.sys.prefix, "lib"),
+          ],
+!         libraries=["cuda", "cudart", 'spdlog', 'fmt'],
+          language="c++",
+          extra_compile_args=["-std=c++17"],
+      ),
+***************
+*** 125,131 ****
+              cuda_lib_dir,
+              os.path.join(os.sys.prefix, "lib"),
+          ],
+!         libraries=["cuda", "cudart"],
+          language="c++",
+          extra_compile_args=["-std=c++17"],
+      ),
+--- 125,131 ----
+              cuda_lib_dir,
+              os.path.join(os.sys.prefix, "lib"),
+          ],
+!         libraries=["cuda", "cudart", 'spdlog', 'fmt'],
+          language="c++",
+          extra_compile_args=["-std=c++17"],
+      ),
+***************
+*** 202,207 ****
+--- 202,209 ----
+          "Programming Language :: Python",
+          "Programming Language :: Python :: 3.7",
+          "Programming Language :: Python :: 3.8",
++         "Programming Language :: Python :: 3.9",
++         "Programming Language :: Python :: 3.10",
+      ],
+      # Include the separately-compiled shared library
+      setup_requires=["Cython>=0.29,<0.30"],

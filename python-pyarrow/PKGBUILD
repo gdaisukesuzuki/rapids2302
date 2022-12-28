@@ -1,0 +1,86 @@
+# Maintainer: Konstantin Gizdov <arch at kge dot pw>
+# Contributor: Bruno Pagani <archange@archlinux.org>
+# Contributor: Guillaume Horel <guillaume.horel@gmail.com>
+
+_pkg=arrow
+_pkgname=pyarrow
+pkgname="python-${_pkgname}"
+pkgver=10.0.1
+pkgrel=1
+pkgdesc="Columnar in-memory analytics layer for big data — Python module."
+arch=(x86_64)
+url="https://arrow.apache.org"
+license=(Apache)
+depends=(arrow python-numpy python-setuptools-scm)
+optdepends=('python-cffi: interact with C code'
+            'python-pandas: Pandas integration'
+            'python-fsspec: Filesystem Spec support')
+makedepends=(git cmake cython python-build python-installer python-wheel python-cffi python-pandas)
+checkdepends=(python-brotli python-hypothesis python-pandas python-pytest python-pytest-lazy-fixture python-pytz)
+# source=("https://archive.apache.org/dist/${_pkg}/${_pkg}-${pkgver}/apache-${_pkg}-${pkgver}".tar.gz
+source=("https://files.pythonhosted.org/packages/11/71/dd884e86aa92b2d602ee2064a485106ce5b447f8cae644f1a6f6a2e72016/pyarrow-10.0.1.tar.gz"
+        git+https://github.com/apache/arrow-testing.git)
+b2sums=('SKIP'
+        'SKIP')
+
+
+prepare() {
+  cd "${srcdir}/${_pkgname}-${pkgver}"
+  for _file in pyproject.toml  ; do
+    sed -e '/oldest-supported-numpy/d' -i "${_file}"
+  done
+}
+
+build() {
+  cd "${srcdir}/${_pkgname}-${pkgver}"
+  export CXXFLAGS="${CXXFLAGS} -I${srcdir}/apache-${_pkg}-${pkgver}/cpp/src"
+  ARROW_HOME=/usr \
+  PARQUET_HOME=/usr \
+  ARROW_RUNTIME_SIMD_LEVEL=AVX512 \
+  PYARROW_WITH_CUDA=1 \
+  PYARROW_BUNDLE_ARROW_CPP_HEADERS=1 \
+  PYARROW_BUNDLE_PLASMA_EXECUTABLE=1 \
+  PYARROW_WITH_HDFS=1 \
+  PYARROW_WITH_FLIGHT=1 \
+  PYARROW_WITH_DATASET=1 \
+  PYARROW_WITH_PARQUET=1 \
+  PYARROW_WITH_PLASMA=1 \
+  PYARROW_WITH_TENSORFLOW=1 \
+  PYARROW_WITH_ORC=1 \
+  PYARROW_BUNDLE_ARROW_CPP=1 \
+  PYARROW_BUNDLE_CYTHON_CPP=1 \
+  PYARROW_WITH_PARQUET_ENCRPYPTION=1 \
+  PYARROW_WITH_GANDIVA=1 \
+  PYARROW_WITH_SNAPPY=1 \
+  python -m build --wheel --no-isolation
+}
+
+
+package(){
+  cd "${srcdir}/${_pkgname}-${pkgver}"
+  ARROW_HOME=/usr \
+  PARQUET_HOME=/usr \
+  ARROW_RUNTIME_SIMD_LEVEL=AVX512 \
+  PYARROW_BUNDLE_ARROW_CPP_HEADERS=1 \
+  PYARROW_BUNDLE_PLASMA_EXECUTABLE=1 \
+  PYARROW_WITH_HDFS=1 \
+  PYARROW_WITH_FLIGHT=1 \
+  PYARROW_WITH_DATASET=1 \
+  PYARROW_WITH_PARQUET=1 \
+  PYARROW_WITH_PLASMA=1 \
+  PYARROW_WITH_TENSORFLOW=1 \
+  PYARROW_WITH_ORC=1 \
+  PYARROW_BUNDLE_ARROW_CPP=1 \
+  PYARROW_BUNDLE_CYTHON_CPP=1 \
+  PYARROW_WITH_PARQUET_ENCRPYPTION=1 \
+  PYARROW_WITH_GANDIVA=1 \
+  PYARROW_WITH_SNAPPY=1 \
+  python -m installer --destdir="${pkgdir}" dist/*.whl
+
+  # drop tests from install
+  local python_version=$(python -c 'import sys; print(".".join(map(str, sys.version_info[:2])))')
+  rm -rf "${pkgdir}/usr/lib/python${python_version}/site-packages/${_pkgname}/tests"
+    mkdir -p  "${pkgdir}"/usr/include/arrow
+    cd "${pkgdir}"/usr/include/arrow
+  ln -s ../../lib/python3.10/site-packages/pyarrow/include/arrow/python .
+}

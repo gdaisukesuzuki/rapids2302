@@ -1,0 +1,57 @@
+*** numba-0.56.4/setup.py-dist	2022-12-20 09:23:32.476518232 +0900
+--- numba-0.56.4/setup.py	2022-12-20 09:23:43.830015493 +0900
+***************
+*** 23,29 ****
+  max_python_version = "3.11"  # exclusive
+  min_numpy_build_version = "1.11"
+  min_numpy_run_version = "1.18"
+! max_numpy_run_version = "1.24"
+  min_llvmlite_version = "0.39.0dev0"
+  max_llvmlite_version = "0.40"
+  
+--- 23,29 ----
+  max_python_version = "3.11"  # exclusive
+  min_numpy_build_version = "1.11"
+  min_numpy_run_version = "1.18"
+! max_numpy_run_version = "1.25"
+  min_llvmlite_version = "0.39.0dev0"
+  max_llvmlite_version = "0.40"
+  
+*** numba-0.56.4/numba/np/arraymath.py-dist	2022-12-28 18:39:24.171435103 +0900
+--- numba-0.56.4/numba/np/arraymath.py	2022-12-28 18:40:13.681427876 +0900
+***************
+*** 4203,4209 ****
+          return impl
+  
+  
+! _gen_np_machar()
+  
+  
+  def generate_xinfo(np_func, container, attr):
+--- 4203,4209 ----
+          return impl
+  
+  
+! # _gen_np_machar()
+  
+  
+  def generate_xinfo(np_func, container, attr):
+*** numba-0.56.4/numba/__init__.py-dist	2022-12-28 18:47:53.686872069 +0900
+--- numba-0.56.4/numba/__init__.py	2022-12-28 18:48:00.423730311 +0900
+***************
+*** 142,148 ****
+  
+      if numpy_version < (1, 18):
+          raise ImportError("Numba needs NumPy 1.18 or greater")
+!     elif numpy_version > (1, 23):
+          raise ImportError("Numba needs NumPy 1.23 or less")
+  
+      try:
+--- 142,148 ----
+  
+      if numpy_version < (1, 18):
+          raise ImportError("Numba needs NumPy 1.18 or greater")
+!     elif numpy_version > (1, 24):
+          raise ImportError("Numba needs NumPy 1.23 or less")
+  
+      try:

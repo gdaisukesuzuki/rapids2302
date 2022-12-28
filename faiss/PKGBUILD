@@ -1,0 +1,124 @@
+# Maintainer: otaj <jasek.ota@gmail.com>
+# If you want the python package to work with MKL, you need to have python-numpy-mkl installed!
+# See https://github.com/facebookresearch/faiss/issues/1393
+
+_pkgname=faiss
+pkgbase=faiss
+pkgname=('faiss' 'python-faiss')
+arch=('i686' 'x86_64')
+url="https://github.com/facebookresearch/faiss"
+license=('MIT')
+pkgver=1.7.3
+pkgrel=3
+options=('staticlibs')
+source=(${_pkgname}::git+https://github.com/facebookresearch/faiss.git#tag=v${pkgver}
+)
+     # 'cmake.patch')
+sha256sums=('SKIP')
+# sha256sums=('SKIP' 'SKIP')
+depends=('clang' 'blas' 'lapack' 'openmp' 'cuda' )
+makedepends=('git' 'python' 'python-numpy' 'swig' 'python-setuptools' 'cmake')
+optdepends=('intel-oneapi-mkl: To use MKL blas implemenetation' 'python-numpy-mkl: To use MKL blas implementation.')
+
+
+prepare() {
+  # patch -p0 < cu.patch
+  # patch -p0 < cmake.patch
+  cd "${srcdir}/${_pkgname}"
+  export CFLAGS+=" -pthread -fopenmp "
+  export CXXFLAGS+="  -std=c++17 -pthread -fopenmp "
+  export LDFLAGS+=" -llapack -lblas -lpthread -lomp -lompd -larcher -lomptarget -L/opt/intel/oneapi/mkl/latest/lib/intel64 -L/opt/intel/oneapi/lib/intel64"
+  # export GXX_INCLUDE=/usr/lib/gcc/x86_64-pc-linux-gnu/11.3.0/include/c++/
+  mkdir -p build
+  cd build
+  cmake .. \
+    -DFAISS_ENABLE_GPU=ON \
+    -DFAISS_ENABLE_PYTHON=ON \
+    -DFAISS_ENABLE_C_API=ON \
+    -DBUILD_SHARED_LIBS=ON \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DCUDAToolkit_ROOT=/opt/cuda \
+    -DCMAKE_CUDA_ARCHITECTURES="86" \
+    -DMKL_LIBRARIES=/opt/intel/oneapi/mkl/latest/lib -DBLA_VENDOR=Intel10_64ilp \
+    -DCMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11 \
+          -DCMAKE_C_COMPILER=/usr/bin/clang \
+          -DCMAKE_CXX_COMPILER=/usr/bin/clang++ \
+	-DMKL_LIBRARIES=/opt/intel/oneapi/mkl \
+	-DCMAKE_CUDA_ARCHITECTURES="86" \
+    -DBUILD_TESTING=OFF \
+    -DFAISS_OPT_LEVEL=avx2 \
+    -DCMAKE_MESSAGE_LOG_LEVEL=VERBOSE
+  cd ..
+  mkdir -p build_static
+  cd build_static
+  cmake .. \
+    -DFAISS_ENABLE_GPU=ON \
+    -DFAISS_ENABLE_PYTHON=ON \
+    -DFAISS_ENABLE_C_API=ON \
+    -DBUILD_STATIC_LIBS=ON \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DCUDAToolkit_ROOT=/opt/cuda \
+    -DCMAKE_CUDA_ARCHITECTURES="86" \
+    -DMKL_LIBRARIES=/opt/intel/mkl -DBLA_VENDOR=Intel10_64ilp \
+    -DCMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11 \
+          -DCMAKE_C_COMPILER=/usr/bin/clang \
+          -DCMAKE_CXX_COMPILER=/usr/bin/clang++ \
+        -DMKL_LIBRARIES=/opt/intel/mkl \
+        -DCMAKE_CUDA_ARCHITECTURES="86" \
+    -DBUILD_TESTING=OFF \
+    -DFAISS_OPT_LEVEL=avx2 \
+    -DCMAKE_MESSAGE_LOG_LEVEL=VERBOSE
+  # find . -name build.make | xargs  sed -i -e 's/clang/g/g'
+   find .. -name build.make | xargs  sed -i -e 's/=\/usr\/bin\/clang++/=\/usr\/bin\/g++-11/g'
+   find .. -name link.txt | xargs sed -i -e 's/ -ldl/  -ldl  -llapack -lblas -lpthread /g'
+
+}
+
+
+
+build() {
+  cd "${srcdir}/${_pkgname}/build"
+  export CFLAGS+=" -pthread -fopenmp "
+  export CXXFLAGS+="  -std=c++17 -pthread -fopenmp "
+  export LDFLAGS+=" -llapack -lblas -lpthread -lomp -lompd -larcher -lomptarget -L/opt/intel/oneapi/mkl/latest/lib/intel64 -L/opt/intel/oneapi/lib/intel64"
+  export GXX_INCLUDE=/usr/lib/gcc/x86_64-pc-linux-gnu/11.3.0/include/c++/
+  export LAPACK_LIBRARIES="/usr/lib/liblapack.so:/usr/lib/liblapacke.so"
+  # export CUDAHOSTCXX=/usr/bin/g++-11
+  make -C . -j12 faiss swigfaiss VERBOSE=1
+  # cd "${srcdir}/${_pkgname}/build_static"
+  # make -C . -j12 faiss swigfaiss VERBOSE=1
+  cd faiss/python
+  # python setup.py build
+}
+
+package_faiss() {
+  pkgdesc='A library for efficient similarity search and clustering of dense vectors.'
+  provides=('faiss')
+  conflicts=('faiss')
+  cd "${srcdir}/${_pkgname}/build"
+  export LAPACK_LIBRARIES="/usr/lib/liblapack.so:/usr/lib/liblapacke.so"
+  export CUDAHOSTCXX=/usr/bin/g++-11
+  make -j12 DESTDIR="$pkgdir" install 
+ # cd "${srcdir}/${_pkgname}/build_static"
+ #  make -j16 DESTDIR="$pkgdir" install
+  cd "${pkgdir}"/usr/lib
+  # ln -fs libfaiss_avx2.a libfaiss.a
+  cd "${srcdir}/${_pkgname}/build"
+  cd ..
+  install -Dm 644 LICENSE "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+}
+
+package_python-faiss() {
+  pkgdesc='A library for efficient similarity search and clustering of dense vectors. Python wrappers'
+  provides=('python-faiss')
+  depends=('python' 'python-numpy' 'faiss')
+
+  cd "${srcdir}/${_pkgname}/build/faiss/python"
+#   python setup.py install --root="$pkgdir/" --optimize=1 --skip-build
+  CC=/usr/bin/clang CXX=/usr/bin/clang++ \
+  python setup.py --verbose build_ext -j12 --library-dir=${pkgdir}/../faiss/usr/lib --include-dir=${pkgdir}/../faiss/usr/include  install --single-version-externally-managed --record=record.txt --prefix=/usr --root="${pkgdir}" 
+ # install -Dm 644 LICENSE "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+}
+

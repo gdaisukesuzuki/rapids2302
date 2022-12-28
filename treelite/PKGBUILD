@@ -1,0 +1,85 @@
+# Maintainer: Sven-Hendrik Haase <svenstaro@gmail.com>
+# Contributor: bartus <arch-user-repoᘓbartus.33mail.com>
+# Contributor: pingplug <pingplug@foxmail.com>
+# Contributor: cornholio <Vigo.the.unholy.carpathian@gmail.com>
+
+pkgname=('treelite' 'python-treelite')
+_pkgname=treelite
+pkgver=3.0.1
+_pkgver=3.0.1
+pkgrel=3
+pkgdesc="decision tree"
+arch=('x86_64')
+url=""
+license=('custom')
+depends=('cmake')
+options=('staticlibs')
+
+# depends=('cmake' 'fmt' 'xgboost' )
+makedepends=('python-setuptools')
+# source=("${_pkgname}::git+https://github.com/dmlc/treelite.git")
+source=("${_pkgname}::git+https://github.com/dmlc/treelite.git#tag=${_pkgver}")
+# source=("${_pkgname}::git+https://github.com/dmlc/treelite.git#tag=${_pkgver}"
+# "cmake.patch")
+
+# sha256sums=('SKIP' 'SKIP')
+sha256sums=('SKIP')
+
+
+build() {
+#   patch -p0 < cmake.patch
+  cd "${srcdir}/treelite"
+  git submodule sync --recursive && git submodule update --init --remote --recursive
+  # git submodule update --init --remote --recursive
+
+  find . -name 'CMakeLists.txt' | xargs sed -i -e 's/3.0.0/3.0.1/g'
+  mkdir -p build
+  cd build
+  export CC=/usr/bin/gcc
+  export CXX=/usr/bin/g++
+  cmake .. \
+    -DCMAKE_C_COMPILER=/usr/bin/gcc \
+    -DCMAKE_CXX_COMPILER=/usr/bin/g++ \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DBUILD_SHARED_LIBS=ON \
+    -DENABLE_PROTOBUF=ON \
+    -DBUILD_TESTS=OFF \
+    -DBUILD_BENCHMARKS=OFF \
+    -DDprotobuf_BUILD_SHARED_LIBS=OFF
+    # -DBUILD_STATIC_LIBS=ON \
+  make -j6
+  cd "${srcdir}"/treelite/python
+  CC=/usr/bin/gcc CXX=/usr/bin/g++ \
+  python setup.py build_ext --inplace --library-dir="${srcdir}/treelite/build"
+
+  cd "${srcdir}"/treelite/runtime/python
+  CC=/usr/bin/gcc CXX=/usr/bin/g++ \
+  python setup.py build_ext --inplace --library-dir="${srcdir}/treelite/build"
+}
+
+package_treelite() {
+  optdepends=('python-treelite: Python 3 Wrapper')
+  cd "${srcdir}"/treelite/build
+  CC=/usr/bin/gcc CXX=/usr/bin/g++ \
+  make DESTDIR="${pkgdir}" install
+  # rm -rf ${pkgdir}/usr/include/dmlc
+
+  install -Dm644 ${srcdir}/treelite/LICENSE ${pkgdir}/usr/share/licenses/treelite/LICENSE
+}
+
+package_python-treelite() {
+  frprnfd=('python-numpy' 'python-scipy')
+  cd "${srcdir}"/treelite/python
+  CC=/usr/bin/gcc CXX=/usr/bin/g++ \
+  python setup.py install --prefix=/usr --root="${pkgdir}" --optimize=1
+
+  cd "${srcdir}"/treelite/runtime/python
+  CC=/usr/bin/gcc CXX=/usr/bin/g++ \
+  python setup.py install --prefix=/usr --root="${pkgdir}" --optimize=1
+
+  install -Dm644 ${srcdir}/treelite/LICENSE ${pkgdir}/usr/share/licenses/python-treelite/LICENSE
+}
+
+
+# vim:set ts=2 sw=2 et:

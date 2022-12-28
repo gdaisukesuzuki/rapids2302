@@ -1,0 +1,91 @@
+*** raft/cpp/cmake/thirdparty/get_faiss.cmake-dist	2022-11-06 01:03:27.668736361 +0900
+--- raft/cpp/cmake/thirdparty/get_faiss.cmake	2022-11-06 01:05:01.803897727 +0900
+***************
+*** 28,34 ****
+        set(BUILD_SHARED_LIBS ON)
+        if (PKG_BUILD_STATIC_LIBS)
+          set(BUILD_SHARED_LIBS OFF)
+!         set(CPM_DOWNLOAD_faiss ON)
+        endif()
+  
+        rapids_cpm_find(faiss ${PKG_VERSION}
+--- 28,34 ----
+        set(BUILD_SHARED_LIBS ON)
+        if (PKG_BUILD_STATIC_LIBS)
+          set(BUILD_SHARED_LIBS OFF)
+! 	set(CPM_DOWNLOAD_faiss OFF)
+        endif()
+  
+        rapids_cpm_find(faiss ${PKG_VERSION}
+***************
+*** 71,88 ****
+  if(NOT RAFT_FAISS_GIT_TAG)
+    # TODO: Remove this once faiss supports FAISS_USE_CUDA_TOOLKIT_STATIC
+    # (https://github.com/facebookresearch/faiss/pull/2446)
+!   set(RAFT_FAISS_GIT_TAG fea/statically-link-ctk-v1.7.0)
+    # set(RAFT_FAISS_GIT_TAG bde7c0027191f29c9dadafe4f6e68ca0ee31fb30)
+  endif()
+  
+  if(NOT RAFT_FAISS_GIT_REPOSITORY)
+    # TODO: Remove this once faiss supports FAISS_USE_CUDA_TOOLKIT_STATIC
+    # (https://github.com/facebookresearch/faiss/pull/2446)
+!   set(RAFT_FAISS_GIT_REPOSITORY https://github.com/trxcllnt/faiss.git)
+!   # set(RAFT_FAISS_GIT_REPOSITORY https://github.com/facebookresearch/faiss.git)
+  endif()
+  
+! find_and_configure_faiss(VERSION    1.7.0
+                           REPOSITORY  ${RAFT_FAISS_GIT_REPOSITORY}
+                           PINNED_TAG  ${RAFT_FAISS_GIT_TAG}
+                           BUILD_STATIC_LIBS ${RAFT_USE_FAISS_STATIC}
+--- 71,89 ----
+  if(NOT RAFT_FAISS_GIT_TAG)
+    # TODO: Remove this once faiss supports FAISS_USE_CUDA_TOOLKIT_STATIC
+    # (https://github.com/facebookresearch/faiss/pull/2446)
+!   # set(RAFT_FAISS_GIT_TAG fea/statically-link-ctk-v1.7.0)
+!   set(RAFT_FAISS_GIT_TAG c08cbff1a4d6c9afb6b8f69004c5530aaf80237a)
+    # set(RAFT_FAISS_GIT_TAG bde7c0027191f29c9dadafe4f6e68ca0ee31fb30)
+  endif()
+  
+  if(NOT RAFT_FAISS_GIT_REPOSITORY)
+    # TODO: Remove this once faiss supports FAISS_USE_CUDA_TOOLKIT_STATIC
+    # (https://github.com/facebookresearch/faiss/pull/2446)
+!   # set(RAFT_FAISS_GIT_REPOSITORY https://github.com/trxcllnt/faiss.git)
+!   set(RAFT_FAISS_GIT_REPOSITORY https://github.com/facebookresearch/faiss.git)
+  endif()
+  
+! find_and_configure_faiss(VERSION    1.7.3
+                           REPOSITORY  ${RAFT_FAISS_GIT_REPOSITORY}
+                           PINNED_TAG  ${RAFT_FAISS_GIT_TAG}
+                           BUILD_STATIC_LIBS ${RAFT_USE_FAISS_STATIC}
+*** raft/cpp/cmake/thirdparty/get_cutlass.cmake-dist	2022-12-15 21:43:29.436802131 +0900
+--- raft/cpp/cmake/thirdparty/get_cutlass.cmake	2022-12-15 21:44:30.204543879 +0900
+***************
+*** 87,93 ****
+  endfunction()
+  
+  if(NOT RAFT_CUTLASS_GIT_TAG)
+!   set(RAFT_CUTLASS_GIT_TAG v2.9.1)
+  endif()
+  
+  if(NOT RAFT_CUTLASS_GIT_REPOSITORY)
+--- 87,93 ----
+  endfunction()
+  
+  if(NOT RAFT_CUTLASS_GIT_TAG)
+!   set(RAFT_CUTLASS_GIT_TAG v2.10.0)
+  endif()
+  
+  if(NOT RAFT_CUTLASS_GIT_REPOSITORY)
+***************
+*** 95,99 ****
+  endif()
+  
+  find_and_configure_cutlass(
+!   VERSION 2.9.1 REPOSITORY ${RAFT_CUTLASS_GIT_REPOSITORY} PINNED_TAG ${RAFT_CUTLASS_GIT_TAG}
+  )
+--- 95,99 ----
+  endif()
+  
+  find_and_configure_cutlass(
+!   VERSION 2.10.0 REPOSITORY ${RAFT_CUTLASS_GIT_REPOSITORY} PINNED_TAG ${RAFT_CUTLASS_GIT_TAG}
+  )
