@@ -1,0 +1,48 @@
+# Maintainer: Sven-Hendrik Haase <svenstaro@gmail.com>
+# Contributor: bartus <arch-user-repoᘓbartus.33mail.com>
+# Contributor: pingplug <pingplug@foxmail.com>
+# Contributor: cornholio <vigo.the.unholy.carpathian@gmail.com>
+
+pkgname=(python-cusignal)
+_pkgname=cusignal
+pkgver=23.02
+_pkgver=22.12.00
+pkgrel=0
+pkgdesc="RAPIDS ML"
+arch=('x86_64')
+url="https://rapids.ai/"
+license=('custom')
+depends=('python-cupy' 'python-numba' 'python-scipy' 'python-six')
+# source=("${_pkgname}::git+https://github.com/rapidsai/cusignal.git")
+source=("${_pkgname}::git+https://github.com/rapidsai/cusignal.git#branch=branch-${pkgver}"
+"sh.patch")
+# source=("${_pkgname}::git+https://github.com/rapidsai/cusignal.git#tag=v${_pkgver}")
+#  "windows.py.patch" "spectral.py.patch" )
+
+# sha256sums=('SKIP')
+sha256sums=('SKIP' 'SKIP')
+# sha256sums=('SKIP')
+
+
+build() {
+  cd "${srcdir}"
+  # patch -p0 < windows.py.patch
+  # patch -p0 < spectral.py.patch
+  # patch -p0 < sh.patch
+
+  cd "${srcdir}/cusignal"
+  git submodule update --init --remote --recursive
+
+  ./build.sh -v -n
+
+
+}
+
+package() {
+  cd "${srcdir}"/cusignal/python
+  python setup.py install --single-version-externally-managed  --prefix=/usr --root="${pkgdir}" --optimize=1
+
+  install -Dm644 ${srcdir}/cusignal/LICENSE ${pkgdir}/usr/share/licenses/python-cusignal/LICENSE
+}
+
+# vim:set ts=2 sw=2 et:
