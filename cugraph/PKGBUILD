@@ -10,7 +10,7 @@ _pkgname=cugraph
 pkgver=23.02
 # _pkgver=22.10
 _pkgver=22.12.00
-pkgrel=4
+pkgrel=6
 pkgdesc="RAPIDS ML"
 arch=('x86_64')
 url="https://rapids.ai/"
@@ -65,7 +65,7 @@ export VERBOSE_FLAG=""
 export BUILD_TYPE=Release
 export INSTALL_TARGET=install
 export BUILD_DISABLE_DEPRECATION_WARNING=ON
-export BUILD_CPP_MG_TESTS=OFF
+export BUILD_CPP_MG_TESTS=ON
 export BUILD_TESTS=ON
 export BUILD_STATIC_FAISS=OFF
 export GPU_ARCH=86
@@ -172,11 +172,11 @@ package_python-cugraph(){
   export LD_LIBRARY_PATH=${pkgdir}/../cugraph/usr/lib:/opt/cuda/lib64:$LD_LIBRARY_PATH
           CC=/usr/bin/gcc CXX=/usr/bin/g++ \
   CMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11 \
-  python setup.py build_ext --verbose -lfmt -lcugraph -lcugraph_c --inplace  -- -DCMAKE_CXX_COMPILER=/usr/bin/g++ -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_LD_FLAGS="-Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now -L/opt/cuda/lib64 -L${pkgdir}/../cugraph/usr/lib -lfmt -lcugraph -lcugraph_c" -DCMAKE_CXX_FLAGS="-march=rocketlake -mtune=native -std=c++17 -O3 -pipe -fno-plt -fexceptions         -Wp,-D_FORTIFY_SOURCE=2,-D_GLIBCXX_ASSERTIONS     -DSPDLOG_FMT_EXTERNAL   -I/opt/cuda/include   -Wformat -Werror=format-security         -fstack-clash-protection -fcf-protection -I${pkgdir}/../cugraph/usr/include " -Dcugraph_DIR=${srcdir}/cugraph/cpp/build -DCMAKE_LIBRARY_PATH="${pkgdir}"/../cugraph/usr/lib -DCMAKE_INCLUDE_PATH="${pkgdir}"/../cugraph/usr/include -DFIND_CUGRAPH_CPP=ON  -DCMAKE_CUDA_ARCHITECTURES=86 -DCMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11 VERBOSE=1 -- -j16
+  python setup.py build_ext --verbose -lfmt -lcugraph -lcugraph_c --inplace  -- -DCMAKE_CXX_COMPILER=/usr/bin/g++ -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_LD_FLAGS="-Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now -L/opt/cuda/lib64 -L${pkgdir}/../cugraph/usr/lib -lfmt -lcugraph -lcugraph_c" -DCMAKE_CXX_FLAGS="-march=rocketlake -mtune=native -std=c++17 -O3 -pipe -fno-plt -fexceptions         -Wp,-D_FORTIFY_SOURCE=2,-D_GLIBCXX_ASSERTIONS     -DSPDLOG_FMT_EXTERNAL   -I/opt/cuda/include   -Wformat -Werror=format-security         -fstack-clash-protection -fcf-protection -I${pkgdir}/../cugraph/usr/include " -Dcugraph_DIR=${srcdir}/cugraph/cpp/build -DCMAKE_LIBRARY_PATH="${pkgdir}"/../cugraph/usr/lib -DCMAKE_INCLUDE_PATH="${pkgdir}"/../cugraph/usr/include -DFIND_CUGRAPH_CPP=ON  -DCMAKE_CUDA_ARCHITECTURES=86 -DCMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11 VERBOSE=1 -- -j12
 
   CMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11 \
           CC=/usr/bin/gcc CXX=/usr/bin/g++ \
-  python setup.py install  --prefix=/usr --root="${pkgdir}" --optimize=1   -- -DCMAKE_CXX_COMPILER=/usr/bin/g++ -DCMAKE_C_COMPILER=/usr/bin/gcc  -DCMAKE_LD_FLAGS="-Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now -L/opt/cuda/lib64 -L${pkgdir}/../cugraph/usr/lib -lfmt -lcugraph -lcugraph_c" -DCMAKE_CXX_FLAGS="-march=rocketlake -mtune=native -std=c++17 -O3 -pipe -fno-plt -fexceptions         -Wp,-D_FORTIFY_SOURCE=2,-D_GLIBCXX_ASSERTIONS     -DSPDLOG_FMT_EXTERNAL   -I/opt/cuda/include   -Wformat -Werror=format-security         -fstack-clash-protection -fcf-protection -I${pkgdir}/../cugraph/usr/include " -Dcugraph_DIR=${srcdir}/cugraph/cpp/build -DCMAKE_LIBRARY_PATH="${pkgdir}"/../cugraph/usr/lib -DCMAKE_INCLUDE_PATH="${pkgdir}"/../cugraph/usr/include -DFIND_CUGRAPH_CPP=ON  -DCMAKE_CUDA_ARCHITECTURES=86 -DCMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11  -- -j${PARALLEL_LEVEL:-1}
+  python setup.py install  --prefix=/usr --root="${pkgdir}" --optimize=1   -- -DCMAKE_CXX_COMPILER=/usr/bin/g++ -DCMAKE_C_COMPILER=/usr/bin/gcc  -DCMAKE_LD_FLAGS="-Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now -L/opt/cuda/lib64 -L${pkgdir}/../cugraph/usr/lib -lfmt -lcugraph -lcugraph_c" -DCMAKE_CXX_FLAGS="-march=rocketlake -mtune=native -std=c++17 -O3 -pipe -fno-plt -fexceptions         -Wp,-D_FORTIFY_SOURCE=2,-D_GLIBCXX_ASSERTIONS     -DSPDLOG_FMT_EXTERNAL   -I/opt/cuda/include   -Wformat -Werror=format-security         -fstack-clash-protection -fcf-protection -I${pkgdir}/../cugraph/usr/include " -Dcugraph_DIR=${srcdir}/cugraph/cpp/build -DCMAKE_LIBRARY_PATH="${pkgdir}"/../cugraph/usr/lib -DCMAKE_INCLUDE_PATH="${pkgdir}"/../cugraph/usr/include -DFIND_CUGRAPH_CPP=ON  -DCMAKE_CUDA_ARCHITECTURES=86 -DCMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11  -- -j12
 
 
   # if [ ! -d ${src}/cugraph/python/cugraph/_skbuild ]; then
@@ -188,11 +188,27 @@ package_python-cugraph(){
   cd "${srcdir}"/cugraph/python/cugraph
   CMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11 \
           CC=/usr/bin/gcc CXX=/usr/bin/g++ \
-  python setup.py build_ext --verbose -lfmt -lcugraph -lcugraph_c --inplace  -- -DCMAKE_CXX_COMPILER=/usr/bin/g++ -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_LD_FLAGS="-Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now -L/opt/cuda/lib64 -L${pkgdir}/../cugraph/usr/lib -lfmt -lcugraph -lcugraph_c" -DCMAKE_CXX_FLAGS="-march=rocketlake -mtune=native -std=c++17 -O3 -pipe -fno-plt -fexceptions         -Wp,-D_FORTIFY_SOURCE=2,-D_GLIBCXX_ASSERTIONS     -DSPDLOG_FMT_EXTERNAL   -I/opt/cuda/include   -Wformat -Werror=format-security         -fstack-clash-protection -fcf-protection -I${pkgdir}/../cugraph/usr/include " -Dcugraph_DIR=${srcdir}/cugraph/cpp/build -DCMAKE_LIBRARY_PATH="${pkgdir}"/../cugraph/usr/lib -DCMAKE_INCLUDE_PATH="${pkgdir}"/../cugraph/usr/include -DFIND_CUGRAPH_CPP=ON  -DCMAKE_CUDA_ARCHITECTURES=86 -DCMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11 VERBOSE=1 -- -j16
+  python setup.py build_ext --verbose -lfmt -lcugraph -lcugraph_c --inplace  -- -DCMAKE_CXX_COMPILER=/usr/bin/g++ -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_LD_FLAGS="-Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now -L/opt/cuda/lib64 -L${pkgdir}/../cugraph/usr/lib -lfmt -lcugraph -lcugraph_c" -DCMAKE_CXX_FLAGS="-march=rocketlake -mtune=native -std=c++17 -O3 -pipe -fno-plt -fexceptions         -Wp,-D_FORTIFY_SOURCE=2,-D_GLIBCXX_ASSERTIONS     -DSPDLOG_FMT_EXTERNAL   -I/opt/cuda/include   -Wformat -Werror=format-security         -fstack-clash-protection -fcf-protection -I${pkgdir}/../cugraph/usr/include " -Dcugraph_DIR=${srcdir}/cugraph/cpp/build -DCMAKE_LIBRARY_PATH="${pkgdir}"/../cugraph/usr/lib -DCMAKE_INCLUDE_PATH="${pkgdir}"/../cugraph/usr/include -DFIND_CUGRAPH_CPP=ON  -DCMAKE_CUDA_ARCHITECTURES=86 -DCMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11 VERBOSE=1 -- -j12
 
   CMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11 \
           CC=/usr/bin/gcc CXX=/usr/bin/g++ \
-  python setup.py install  --prefix=/usr --root="${pkgdir}" --optimize=1   -- -DCMAKE_CXX_COMPILER=/usr/bin/g++ -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_LD_FLAGS="-Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now -L/opt/cuda/lib64 -L${pkgdir}/../cugraph/usr/lib -lfmt -lcugraph -lcugraph_c" -DCMAKE_CXX_FLAGS="-march=rocketlake -mtune=native -std=c++17 -O3 -pipe -fno-plt -fexceptions         -Wp,-D_FORTIFY_SOURCE=2,-D_GLIBCXX_ASSERTIONS     -DSPDLOG_FMT_EXTERNAL   -I/opt/cuda/include   -Wformat -Werror=format-security         -fstack-clash-protection -fcf-protection -I${pkgdir}/../cugraph/usr/include " -Dcugraph_DIR=${srcdir}/cugraph/cpp/build -DCMAKE_LIBRARY_PATH="${pkgdir}"/../cugraph/usr/lib -DCMAKE_INCLUDE_PATH="${pkgdir}"/../cugraph/usr/include -DFIND_CUGRAPH_CPP=ON  -DCMAKE_CUDA_ARCHITECTURES=86 -DCMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11  -- -j${PARALLEL_LEVEL:-1}
+  python setup.py install  --prefix=/usr --root="${pkgdir}" --optimize=1   -- -DCMAKE_CXX_COMPILER=/usr/bin/g++ -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_LD_FLAGS="-Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now -L/opt/cuda/lib64 -L${pkgdir}/../cugraph/usr/lib -lfmt -lcugraph -lcugraph_c" -DCMAKE_CXX_FLAGS="-march=rocketlake -mtune=native -std=c++17 -O3 -pipe -fno-plt -fexceptions         -Wp,-D_FORTIFY_SOURCE=2,-D_GLIBCXX_ASSERTIONS     -DSPDLOG_FMT_EXTERNAL   -I/opt/cuda/include   -Wformat -Werror=format-security         -fstack-clash-protection -fcf-protection -I${pkgdir}/../cugraph/usr/include " -Dcugraph_DIR=${srcdir}/cugraph/cpp/build -DCMAKE_LIBRARY_PATH="${pkgdir}"/../cugraph/usr/lib -DCMAKE_INCLUDE_PATH="${pkgdir}"/../cugraph/usr/include -DFIND_CUGRAPH_CPP=ON  -DCMAKE_CUDA_ARCHITECTURES=86 -DCMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11  -- -j12
+
+  cd "${srcdir}"/cugraph/python/cugraph-dgl
+  CMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11 \
+          CC=/usr/bin/gcc CXX=/usr/bin/g++ \
+  python setup.py build_ext # --verbose -lfmt -lcugraph -lcugraph_c --inplace  # -- -DCMAKE_CXX_COMPILER=/usr/bin/g++ -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_LD_FLAGS="-Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now -L/opt/cuda/lib64 -L${pkgdir}/../cugraph/usr/lib -lfmt -lcugraph -lcugraph_c" -DCMAKE_CXX_FLAGS="-march=rocketlake -mtune=native -std=c++17 -O3 -pipe -fno-plt -fexceptions         -Wp,-D_FORTIFY_SOURCE=2,-D_GLIBCXX_ASSERTIONS     -DSPDLOG_FMT_EXTERNAL   -I/opt/cuda/include   -Wformat -Werror=format-security         -fstack-clash-protection -fcf-protection -I${pkgdir}/../cugraph/usr/include " -Dcugraph_DIR=${srcdir}/cugraph/cpp/build -DCMAKE_LIBRARY_PATH="${pkgdir}"/../cugraph/usr/lib -DCMAKE_INCLUDE_PATH="${pkgdir}"/../cugraph/usr/include -DFIND_CUGRAPH_CPP=ON  -DCMAKE_CUDA_ARCHITECTURES=86 -DCMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11 VERBOSE=1 -- -j12
+  CMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11 \
+          CC=/usr/bin/gcc CXX=/usr/bin/g++ \
+  python setup.py install  --prefix=/usr --root="${pkgdir}" --optimize=1   # -- -DCMAKE_CXX_COMPILER=/usr/bin/g++ -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_LD_FLAGS="-Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now -L/opt/cuda/lib64 -L${pkgdir}/../cugraph/usr/lib -lfmt -lcugraph -lcugraph_c" -DCMAKE_CXX_FLAGS="-march=rocketlake -mtune=native -std=c++17 -O3 -pipe -fno-plt -fexceptions         -Wp,-D_FORTIFY_SOURCE=2,-D_GLIBCXX_ASSERTIONS     -DSPDLOG_FMT_EXTERNAL   -I/opt/cuda/include   -Wformat -Werror=format-security         -fstack-clash-protection -fcf-protection -I${pkgdir}/../cugraph/usr/include " -Dcugraph_DIR=${srcdir}/cugraph/cpp/build -DCMAKE_LIBRARY_PATH="${pkgdir}"/../cugraph/usr/lib -DCMAKE_INCLUDE_PATH="${pkgdir}"/../cugraph/usr/include -DFIND_CUGRAPH_CPP=ON  -DCMAKE_CUDA_ARCHITECTURES=86 -DCMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11  -- -j12
+
+  cd "${srcdir}"/cugraph/python/cugraph-pyg
+  CMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11 \
+          CC=/usr/bin/gcc CXX=/usr/bin/g++ \
+  python setup.py build_ext # --verbose -lfmt -lcugraph -lcugraph_c --inplace  -- -DCMAKE_CXX_COMPILER=/usr/bin/g++ -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_LD_FLAGS="-Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now -L/opt/cuda/lib64 -L${pkgdir}/../cugraph/usr/lib -lfmt -lcugraph -lcugraph_c" -DCMAKE_CXX_FLAGS="-march=rocketlake -mtune=native -std=c++17 -O3 -pipe -fno-plt -fexceptions         -Wp,-D_FORTIFY_SOURCE=2,-D_GLIBCXX_ASSERTIONS     -DSPDLOG_FMT_EXTERNAL   -I/opt/cuda/include   -Wformat -Werror=format-security         -fstack-clash-protection -fcf-protection -I${pkgdir}/../cugraph/usr/include " -Dcugraph_DIR=${srcdir}/cugraph/cpp/build -DCMAKE_LIBRARY_PATH="${pkgdir}"/../cugraph/usr/lib -DCMAKE_INCLUDE_PATH="${pkgdir}"/../cugraph/usr/include -DFIND_CUGRAPH_CPP=ON  -DCMAKE_CUDA_ARCHITECTURES=86 -DCMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11 VERBOSE=1 -- -j12
+  CMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11 \
+          CC=/usr/bin/gcc CXX=/usr/bin/g++ \
+  python setup.py install  --prefix=/usr --root="${pkgdir}" --optimize=1 #  -- -DCMAKE_CXX_COMPILER=/usr/bin/g++ -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_LD_FLAGS="-Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now -L/opt/cuda/lib64 -L${pkgdir}/../cugraph/usr/lib -lfmt -lcugraph -lcugraph_c" -DCMAKE_CXX_FLAGS="-march=rocketlake -mtune=native -std=c++17 -O3 -pipe -fno-plt -fexceptions         -Wp,-D_FORTIFY_SOURCE=2,-D_GLIBCXX_ASSERTIONS     -DSPDLOG_FMT_EXTERNAL   -I/opt/cuda/include   -Wformat -Werror=format-security         -fstack-clash-protection -fcf-protection -I${pkgdir}/../cugraph/usr/include " -Dcugraph_DIR=${srcdir}/cugraph/cpp/build -DCMAKE_LIBRARY_PATH="${pkgdir}"/../cugraph/usr/lib -DCMAKE_INCLUDE_PATH="${pkgdir}"/../cugraph/usr/include -DFIND_CUGRAPH_CPP=ON  -DCMAKE_CUDA_ARCHITECTURES=86 -DCMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11  -- -j12
 
   # env CUGRAPH_BUILD_PATH=${CUGRAPH_BUILD_PATH} python setup.py install  --prefix=/usr --root="${pkgdir}" --optimize=1
   install -Dm644 ${srcdir}/cugraph/LICENSE ${pkgdir}/usr/share/licenses/python-cugraph/LICENSE
