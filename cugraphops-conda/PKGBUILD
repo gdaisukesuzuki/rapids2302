@@ -27,7 +27,8 @@ source=(
 #https://anaconda.org/rapidsai-nightly/libcugraphops/23.02.00a221207/download/linux-64/libcugraphops-23.02.00a221207-cuda11_gcf50ec9_36.tar.bz2
 # https://anaconda.org/rapidsai-nightly/libcugraphops/23.02.00a221215/download/linux-64/libcugraphops-23.02.00a221215-cuda11_g6a57606_38.tar.bz2
 #https://anaconda.org/rapidsai-nightly/libcugraphops/23.02.00a221219/download/linux-64/libcugraphops-23.02.00a221219-cuda11_gf60fcbab_41.tar.bz2
-https://anaconda.org/rapidsai-nightly/libcugraphops/23.02.00a221224/download/linux-64/libcugraphops-23.02.00a221224-cuda11_g4f0facd3_44.tar.bz2
+#https://anaconda.org/rapidsai-nightly/libcugraphops/23.02.00a221224/download/linux-64/libcugraphops-23.02.00a221224-cuda11_g4f0facd3_44.tar.bz2
+https://anaconda.org/rapidsai-nightly/libcugraphops/23.02.00a230105/download/linux-64/libcugraphops-23.02.00a230105-cuda11_g82978516_47.tar.bz2
 )
 #"cc.patch" )
 sha512sums=('SKIP' )
