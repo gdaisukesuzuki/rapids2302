@@ -5,8 +5,8 @@
 _pkg=arrow
 _pkgname=pyarrow
 pkgname="python-${_pkgname}"
-pkgver=10.0.1
-pkgrel=1
+pkgver=11.0.0
+pkgrel=0
 pkgdesc="Columnar in-memory analytics layer for big data — Python module."
 arch=(x86_64)
 url="https://arrow.apache.org"
@@ -18,7 +18,7 @@ optdepends=('python-cffi: interact with C code'
 makedepends=(git cmake cython python-build python-installer python-wheel python-cffi python-pandas)
 checkdepends=(python-brotli python-hypothesis python-pandas python-pytest python-pytest-lazy-fixture python-pytz)
 # source=("https://archive.apache.org/dist/${_pkg}/${_pkg}-${pkgver}/apache-${_pkg}-${pkgver}".tar.gz
-source=("https://files.pythonhosted.org/packages/11/71/dd884e86aa92b2d602ee2064a485106ce5b447f8cae644f1a6f6a2e72016/pyarrow-10.0.1.tar.gz"
+source=("https://files.pythonhosted.org/packages/2c/e7/49cc11436f92a6a9001e4002fb8e5cd6733fc15a89a354cbc22b206a8171/pyarrow-11.0.0.tar.gz"
         git+https://github.com/apache/arrow-testing.git)
 b2sums=('SKIP'
         'SKIP')
@@ -58,24 +58,7 @@ build() {
 
 package(){
   cd "${srcdir}/${_pkgname}-${pkgver}"
-  ARROW_HOME=/usr \
-  PARQUET_HOME=/usr \
-  ARROW_RUNTIME_SIMD_LEVEL=AVX512 \
-  PYARROW_BUNDLE_ARROW_CPP_HEADERS=1 \
-  PYARROW_BUNDLE_PLASMA_EXECUTABLE=1 \
-  PYARROW_WITH_HDFS=1 \
-  PYARROW_WITH_FLIGHT=1 \
-  PYARROW_WITH_DATASET=1 \
-  PYARROW_WITH_PARQUET=1 \
-  PYARROW_WITH_PLASMA=1 \
-  PYARROW_WITH_TENSORFLOW=1 \
-  PYARROW_WITH_ORC=1 \
-  PYARROW_BUNDLE_ARROW_CPP=1 \
-  PYARROW_BUNDLE_CYTHON_CPP=1 \
-  PYARROW_WITH_PARQUET_ENCRPYPTION=1 \
-  PYARROW_WITH_GANDIVA=1 \
-  PYARROW_WITH_SNAPPY=1 \
-  python -m installer --destdir="${pkgdir}" dist/*.whl
+  pip3 install dist/*.whl --no-deps --prefix=/usr --root=${pkgdir}
 
   # drop tests from install
   local python_version=$(python -c 'import sys; print(".".join(map(str, sys.version_info[:2])))')

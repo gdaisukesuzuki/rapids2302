@@ -3,7 +3,7 @@
 _pkg=benchmark
 pkgname=python-rapids-pytest-benchmark
 pkgver=0.0.14
-pkgrel=5
+pkgrel=6
 pkgdesc="Distributed task scheduler for Dask"
 arch=(x86_64)
 url="https://distributed.dask.org/"
@@ -12,13 +12,14 @@ depends=(
     python-pytest-benchmark
     python-asvdb
     python-pynvml
-    python-pygal
     python-cudf
+    python-pygal
 )
 
-source=(git+https://github.com/rapidsai/benchmark.git)
-#source=(https://github.com/dask/distributed/archive/${pkgver}/${pkgname}-${pkgver}.tar.gz)
+source=(git+https://github.com/rapidsai/${_pkg}.git)
+# ha256sums=('SKIP' 'SKIP')
 sha256sums=('SKIP')
+
 
 build() {
   cd ${_pkg}/rapids_pytest_benchmark

@@ -1,0 +1,31 @@
+# Maintainer: Sven-Hendrik Haase <svenstaro@gmail.com>
+# Maintainer: Konstantin Gizdov <arch@kge.pw>
+pkgname=python-pylibcugraphops-conda
+provides=(python-pylibcugraphops)
+pkgver=23.02
+pkgrel=1
+pkgdesc=""
+arch=('x86_64')
+url="https://anaconda.org/rapidsai-nightly/libcugraphops/files"
+license=('custom:NVIDIA')
+depends=('cugraphops' 'python')
+# options=(!strip staticlibs)
+# source=(https://anaconda.org/nvidia/libcumlprims/0.19.0/download/linux-64/libcumlprims-0.19.0-cuda11.2_ga2abf9f_0.tar.bz2)
+# source=(https://anaconda.org/nvidia/libcumlprims/21.06.00/download/linux-64/libcumlprims-21.06.00-cuda11.2_gfda2e6c_0.tar.bz2
+# source=(https://anaconda.org/rapidsai-nightly/libcumlprims/21.08.00a210804/download/linux-64/libcumlprims-21.08.00a210804-cuda11.4_g4db0971_5.tar.bz2
+# https://anaconda.org/nvidia/libcumlprims/21.12.00/download/linux-64/libcumlprims-21.12.00-cuda11_g0a7f19f_0.tar.bz2
+source=(
+https://anaconda.org/nvidia/pylibcugraphops/23.02.00/download/linux-64/pylibcugraphops-23.02.00-cuda11_py310_g95b471e2_0.tar.bz2
+)
+#"cc.patch" )
+sha512sums=('SKIP' )
+
+
+package() {
+#  patch -p0 < cc.patch
+  local _predir="${srcdir}"
+  cd ${_predir}
+  mkdir -p "${pkgdir}/usr/lib"
+  cp -alr lib/*  "${pkgdir}/usr/lib"
+  # chmod +x "${pkgdir}/usr/lib/libcugraph-ops++.so"
+}

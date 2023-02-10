@@ -6,17 +6,17 @@
 pkgname=(python-cusignal)
 _pkgname=cusignal
 pkgver=23.02
-_pkgver=22.12.00
-pkgrel=0
+_pkgver=23.02.00
+pkgrel=1
 pkgdesc="RAPIDS ML"
 arch=('x86_64')
 url="https://rapids.ai/"
 license=('custom')
 depends=('python-cupy' 'python-numba' 'python-scipy' 'python-six')
-# source=("${_pkgname}::git+https://github.com/rapidsai/cusignal.git")
-source=("${_pkgname}::git+https://github.com/rapidsai/cusignal.git#branch=branch-${pkgver}"
+#source=("${_pkgname}::git+https://github.com/rapidsai/cusignal.git")
+# source=("${_pkgname}::git+https://github.com/rapidsai/cusignal.git#branch=branch-${pkgver}"
+source=("${_pkgname}::git+https://github.com/rapidsai/cusignal.git#tag=v${_pkgver}"
 "sh.patch")
-# source=("${_pkgname}::git+https://github.com/rapidsai/cusignal.git#tag=v${_pkgver}")
 #  "windows.py.patch" "spectral.py.patch" )
 
 # sha256sums=('SKIP')

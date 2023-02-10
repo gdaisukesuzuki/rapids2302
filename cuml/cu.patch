@@ -35,3 +35,29 @@
     } while (tol_grads < 2 && num_iters < max_epochs);
   }
 
+*** cuml/cpp/src/svm/linear.cu-dist	2023-01-23 16:31:16.259116120 +0900
+--- cuml/cpp/src/svm/linear.cu	2023-01-23 16:30:45.195136830 +0900
+***************
+*** 146,155 ****
+    // the largest 'z' in the row (to substract it from z for numeric stability).
+    T t      = std::numeric_limits<T>::lowest();
+    T maxVal = t;
+    int j    = threadIdx.x;
+    if constexpr (Binary) {
+      t      = rowIn[0];
+!     maxVal = raft::max<T>(t, 0);
+      t      = T(j) * t;  // set z[0] = 0, z[1] = t
+    } else {
+      for (; j < nClasses; j += BX) {
+--- 146,156 ----
+    // the largest 'z' in the row (to substract it from z for numeric stability).
+    T t      = std::numeric_limits<T>::lowest();
+    T maxVal = t;
++   T zeroVal = 0;
+    int j    = threadIdx.x;
+    if constexpr (Binary) {
+      t      = rowIn[0];
+!     maxVal = raft::max<T>(t, zeroVal);
+      t      = T(j) * t;  // set z[0] = 0, z[1] = t
+    } else {
+      for (; j < nClasses; j += BX) {

@@ -5,9 +5,9 @@
 
 pkgname=('treelite' 'python-treelite')
 _pkgname=treelite
-pkgver=3.0.1
-_pkgver=3.0.1
-pkgrel=3
+pkgver=3.1.0
+_pkgver=3.1.0
+pkgrel=1
 pkgdesc="decision tree"
 arch=('x86_64')
 url=""
@@ -44,8 +44,8 @@ build() {
     -DCMAKE_INSTALL_PREFIX=/usr \
     -DBUILD_SHARED_LIBS=ON \
     -DENABLE_PROTOBUF=ON \
-    -DBUILD_TESTS=OFF \
-    -DBUILD_BENCHMARKS=OFF \
+    -DBUILD_TESTS=ON \
+    -DBUILD_BENCHMARKS=ON \
     -DDprotobuf_BUILD_SHARED_LIBS=OFF
     # -DBUILD_STATIC_LIBS=ON \
   make -j6

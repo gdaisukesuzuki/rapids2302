@@ -6,9 +6,9 @@
 pkgname=(cuml python-cuml)
 _pkgname=cuml
 pkgver=23.02
-_pkgver=22.12.00
+_pkgver=23.02.00
 # _pkgver=22.06
-pkgrel=7
+pkgrel=11
 pkgdesc="RAPIDS Memory Manager"
 arch=('x86_64')
 url="https://rapids.ai/"
@@ -27,11 +27,12 @@ depends=('curaft' 'cumlprims' 'treelite' 'faiss' 'cudf' 'nccl'  'cuda' 'cmake' '
 # makedepends=('python-cmake_setuptools' 'protobuf-static')
 # depends=('arrow-cudf<0.16.0' 'gcc8' 'cuda' 'cmake' 'rapids-rmm' 'dlpack' 'boost-libs')
 # source=("${_pkgname}::git+https://github.com/rapidsai/cudf.git"
-# source=("${_pkgname}::git+https://github.com/rapidsai/cuml.git#tag=v${_pkgver}"
-source=("${_pkgname}::git+https://github.com/rapidsai/cuml.git#branch=branch-${pkgver}"
+# source=("${_pkgname}::git+https://github.com/rapidsai/cuml.git#branch=branch-${pkgver}"
+source=("${_pkgname}::git+https://github.com/rapidsai/cuml.git#tag=v${_pkgver}"
 "setup.py.patch"
 "cu.patch"
 "test.patch"
+"cmake.patch"
 # "https://raw.githubusercontent.com/rapidsai/gputreeshap/main/GPUTreeShap/gpu_treeshap.h"
 )
 # "cc.patch" "cu.patch"  "setup.py.patch" )
@@ -47,7 +48,7 @@ source=("${_pkgname}::git+https://github.com/rapidsai/cuml.git#branch=branch-${p
 # sha256sums=( 'SKIP' 'SKIP')
 # sha256sums=('SKIP' 'SKIP' 'SKIP')
 # sha256sums=('SKIP')
-sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP')
+sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP')
 
 
 prepare() {
@@ -62,9 +63,8 @@ prepare() {
 #  mv ${srcdir}/info ${srcdir}/cumlprims
 #  mv ${srcdir}/include ${srcdir}/cumlprims
 
-  patch -p0 < cu.patch
  # patch -p0 < cc.patch
-#  patch -p0 < cmake.patch
+ # patch -p0 < cmake.patch
   patch -p0 < setup.py.patch
   patch -p0 < test.patch
 
@@ -76,6 +76,21 @@ prepare() {
     find . -name '*.cu*' | xargs sed -i -e 's/raft::Nop<Type,\ IdxType>/raft::identity_op/g'
     find . -name '*.cu*' | xargs sed -i -e 's/raft::Nop<DataT,\ IdxT>/raft::identity_op/g'
     find . -name '*.cu*' | xargs sed -i -e 's/raft::Nop<math_t>/raft::identity_op/g'
+    find . -name '*.cu*' | xargs sed -i -e 's/myLog/log/g'
+    find . -name '*.h*' | xargs sed -i -e 's/myLog/log/g'
+    find . -name '*.cu*' | xargs sed -i -e 's/myExp/exp/g'
+    find . -name '*.h*' | xargs sed -i -e 's/myExp/exp/g'
+    find . -name '*.cu*' | xargs sed -i -e 's/myATanh/atanh/g'
+    find . -name '*.h*' | xargs sed -i -e 's/myATanh/atanh/g'
+    find . -name '*.cu*' | xargs sed -i -e 's/myTanh/tanh/g'
+    find . -name '*.h*' | xargs sed -i -e 's/myTanh/tanh/g'
+    find . -name '*.cu*' | xargs sed -i -e 's/myAbs/abs/g'
+    find . -name '*.h*' | xargs sed -i -e 's/myAbs/abs/g'
+    find . -name '*.cu*' | xargs sed -i -e 's/myMax/max/g'
+    find . -name '*.h*' | xargs sed -i -e 's/myMax/max/g'
+    find . -name '*.cu*' | xargs sed -i -e 's/mySqrt/sqrt/g'
+    find . -name '*.h*' | xargs sed -i -e 's/mySqrt/sqrt/g'
+  patch -p0 < cu.patch
     # find . -name '*.cu*' | xargs sed -i -e 's/raft::linalg::mapThenReduce/raft::linalg::mapReduce/g'
     # find . -name '*.cu*' | xargs sed -i -e 's/raft::random::Rng/raft::random::RngState/g'
 
@@ -106,7 +121,7 @@ export BUILD_CUML_STD_COMMS=ON
 export BUILD_CPP_MG_TESTS=OFF
 # export BUILD_CPP_MG_TESTS=OFF
 # export BUILD_CPP_TESTS=ON
-export BUILD_CPP_TESTS=ON
+export BUILD_CPP_TESTS=OFF
 # export BUILD_STATIC_FAISS=OFF
 export CMAKE_GENERATOR="Ninja"
 # export SINGLEGPU_CPP_FLAG=OFF
@@ -151,8 +166,8 @@ export LDFLAGS+=" -llapack -lblas -lpthread -lomp -lompd -larcher -lomptarget -l
           -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
           -DBUILD_CUML_C_LIBRARY=ON \
           -DENABLE_CUMLPRIMS_MG=ON \
-          -DBUILD_CUML_BENCH=OFF \
-          -DBUILD_CUML_EXAMPLES=OFF \
+          -DBUILD_CUML_BENCH=ON \
+          -DBUILD_CUML_EXAMPLES=ON \
           -DSINGLEGPU=${SINGLEGPU_CPP_FLAG} \
           -DBUILD_CUML_PRIMS_BENCH=OFF \
           -DBUILD_CUML_TESTS=${BUILD_CPP_TESTS} \
@@ -201,7 +216,7 @@ package_cuml() {
 # export LDFLAGS="${LDFLAGS} -L/opt/intel/oneapi/mkl/latest/lib/intel64 -lmkl_intel_lp64 -lmkl_core -lmkl_sequential -lomp -lompd -llapack -lblas "
 export LDFLAGS+=" -llapack -lblas -lpthread -lomp -lompd -larcher -lomptarget -lmkl_intel_lp64 -lmkl_core -lmkl_sequential -L/opt/intel/oneapi/mkl/latest/lib/intel64 -L/opt/intel/oneapi/lib/intel64"
   # make DESTDIR="${pkgdir}" install_cudf
-  DESTDIR="${pkgdir}"  cmake  --build ${LIBCUML_BUILD_DIR}  -v -j15 --target cuml++ cuml  install
+  DESTDIR="${pkgdir}"  cmake  --build ${LIBCUML_BUILD_DIR}  -v -j12 --target cuml++ cuml  install
 #  DESTDIR="${pkgdir}"  cmake --build ${LIBCUML_BUILD_DIR} -v -j${PARALLEL_LEVEL:-1} --target cuml++ cuml ml prims install
  rm -rf "${pkgdir}"/home
  # cmake --build . -j$(nproc) --target install 

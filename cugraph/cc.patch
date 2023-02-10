@@ -101,25 +101,6 @@
                                                           size_t{0},
                                                           std::numeric_limits<size_t>::max(),
                                                           do_expensive_check_);
-*** cugraph/cpp/src/c_api/uniform_neighbor_sampling.cpp-dist	2022-11-26 23:59:49.396466847 +0900
---- cugraph/cpp/src/c_api/uniform_neighbor_sampling.cpp	2022-11-27 00:00:49.848794299 +0900
-***************
-*** 186,192 ****
-      *error);
-  
-    uniform_neighbor_sampling_functor functor{
-!     handle, graph, start, fan_out, with_replacement, do_expensive_check};
-    return cugraph::c_api::run_algorithm(graph, functor, result, error);
-  }
-  
---- 186,192 ----
-      *error);
-  
-    uniform_neighbor_sampling_functor functor{
-!     handle, graph, start, fan_out, static_cast<bool>(with_replacement), static_cast<bool>(do_expensive_check)};
-    return cugraph::c_api::run_algorithm(graph, functor, result, error);
-  }
-  
 *** cugraph/cpp/include/cugraph/visitors/generic_cascaded_dispatch.hpp-dist	2022-11-27 00:38:15.582702387 +0900
 --- cugraph/cpp/include/cugraph/visitors/generic_cascaded_dispatch.hpp	2022-11-27 00:40:09.081217820 +0900
 ***************

@@ -2,8 +2,8 @@
 # Contributor: Guillaume Horel <guillaume.horel@gmail.com>
 
 pkgname=arrow
-pkgver=10.0.1
-pkgrel=2
+pkgver=11.0.0
+pkgrel=0
 pkgdesc="Columnar in-memory analytics layer for big data."
 arch=(x86_64)
 url="https://arrow.apache.org"
@@ -17,7 +17,7 @@ makedepends=(boost cmake flatbuffers gmock python-numpy git clang)
 source=(https://archive.apache.org/dist/${pkgname}/${pkgname}-${pkgver}/apache-${pkgname}-${pkgver}.tar.gz
         git+https://github.com/apache/parquet-testing.git
         git+https://github.com/apache/arrow-testing.git)
-b2sums=('3ee82372635d90b05c1e7c9d846c52a923ba181e177959aa6be2603ab06e93415cf8e21cf194816e1c1eed83eb5a926e1414fb8930e525c208e46a6687601939'
+b2sums=('SKIP'
         'SKIP'
         'SKIP')
 
@@ -50,7 +50,6 @@ build(){
     -DARROW_PLASMA=ON \
     -DARROW_PYTHON=ON \
     -DARROW_TENSORFLOW=ON \
-    -DARROW_SIMD_LEVEL=AVX512 \
     -DARROW_USE_GLOG=ON \
     -DARROW_WITH_BROTLI=ON \
     -DARROW_WITH_BZ2=ON \
@@ -63,6 +62,7 @@ build(){
     -DARROW_CSV=ON \
     -DARROW_CUDA=ON \
     -DPARQUET_REQUIRE_ENCRYPTION=ON
+    # -DARROW_SIMD_LEVEL=AVX512 \
   make -C build -j12
 }
 

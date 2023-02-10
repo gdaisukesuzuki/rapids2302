@@ -1,0 +1,51 @@
+*** cuml/cpp/include/cuml/tree/flatnode.h-dist	2021-07-08 19:10:51.276078022 +0900
+--- cuml/cpp/include/cuml/tree/flatnode.h	2021-07-08 19:13:07.538407505 +0900
+***************
+*** 16,21 ****
+--- 16,23 ----
+  
+  #pragma once
+  
++ #include <cstdint>
++ 
+  /**
+   * A node in Decision Tree.
+   * This however uses an index instead of pointer to left child. Right child
+*** cuml/cpp/include/cuml/datasets/make_blobs.hpp-dist	2021-07-08 19:15:38.157634396 +0900
+--- cuml/cpp/include/cuml/datasets/make_blobs.hpp	2021-07-08 19:15:55.854601025 +0900
+***************
+*** 16,21 ****
+--- 16,22 ----
+  
+  #pragma once
+  
++ #include <cstdint>
+  namespace raft {
+  class handle_t;
+  }
+*** cuml/cpp/include/cuml/datasets/make_regression.hpp-dist	2021-07-08 19:18:17.730334111 +0900
+--- cuml/cpp/include/cuml/datasets/make_regression.hpp	2021-07-08 19:19:31.578978386 +0900
+***************
+*** 16,21 ****
+--- 16,23 ----
+  
+  #pragma once
+  
++ #include <cstdint>
++ 
+  namespace raft {
+  class handle_t;
+  }
+*** cuml/cpp/include/cuml/decomposition/params.hpp-dist	2021-11-07 22:33:21.313089108 +0900
+--- cuml/cpp/include/cuml/decomposition/params.hpp	2021-11-07 22:49:39.543916204 +0900
+***************
+*** 15,20 ****
+--- 15,21 ----
+   */
+  
+  #pragma once
++ #include <cstdint>
+  
+  namespace ML {
+  
+  

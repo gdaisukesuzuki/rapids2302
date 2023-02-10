@@ -10,14 +10,14 @@ _pkgname3=kvikio
 _pkgname4=python-ucx
 # pkgver=0.19.2
 pkgver=23.02
-_pkgver=22.10.01
+_pkgver=23.02.00
 _pkgver2=3.1.0
 _pkgver3=0.7.0
-_pkgver4=0.28.00
+_pkgver4=0.30.00
 _pkgver44=0.30
 # _pkgver=22.06
 
-pkgrel=10
+pkgrel=14
 pkgdesc="RAPIDS Memory Manager"
 arch=('x86_64')
 url="https://rapids.ai/"
@@ -41,10 +41,9 @@ depends=('nvcomp' 'gcc11'  'nccl' 'cuda' 'cmake' 'boost-libs' 'spdlog' 'fmt' 'py
 # source=("${_pkgname}::git+https://github.com/rapidsai/cudf.git"
 # source=("${_pkgname}::git+https://github.com/rapidsai/cudf.git#branch=branch-${_pkgver}"
 # source=("${_pkgname}::git+https://github.com/rapidsai/cudf.git#branch=branch-22.04"
-# source=("${_pkgname}::git+https://github.com/rapidsai/cudf.git#tag=v${_pkgver}"
-source=("${_pkgname}::git+https://github.com/rapidsai/cudf.git#branch=branch-${pkgver}"
+# source=("${_pkgname}::git+https://github.com/rapidsai/cudf.git#branch=branch-${pkgver}"
+source=("${_pkgname}::git+https://github.com/rapidsai/cudf.git#tag=v${_pkgver}"
  "cu-test.patch"
- "cc.patch"
  "cmake.patch"
 # "https://anaconda.org/rapidsai/libcudf/21.08.02/download/linux-64/libcudf-21.08.02-cuda11.4_gf6d31fa95d_0.tar.bz2"
 # "build.sh.patch"
@@ -53,9 +52,9 @@ source=("${_pkgname}::git+https://github.com/rapidsai/cudf.git#branch=branch-${p
 #  "setup.py.patch"
 "git+https://github.com/NVIDIA/NVTX.git#tag=v${_pkgver2}"
 "git+https://github.com/rapidsai/ptxcompiler.git#tag=${_pkgver3}"
-"${_pkgname2}::git+https://github.com/rapidsai/rmm.git#branch=branch-${pkgver}"
-"${_pkgname3}::git+https://github.com/rapidsai/kvikio.git#branch=branch-${pkgver}"
-"${_pkgname4}::git+https://github.com/rapidsai/ucx-py.git#branch=branch-${_pkgver44}"
+"${_pkgname2}::git+https://github.com/rapidsai/rmm.git#tag=v${_pkgver}"
+"${_pkgname3}::git+https://github.com/rapidsai/kvikio.git#tag=v${_pkgver}"
+"${_pkgname4}::git+https://github.com/rapidsai/ucx-py.git#tag=v${_pkgver4}"
 #"https://anaconda.org/rapidsai-nightly/cubinlinker/0.2.0/download/linux-64/cubinlinker-0.2.0-py310hf09951c_1.tar.bz2"
 "https://anaconda.org/rapidsai/cubinlinker/0.2.2/download/linux-64/cubinlinker-0.2.2-py310hf09951c_0.conda"
  "third.patch"
@@ -76,7 +75,7 @@ source=("${_pkgname}::git+https://github.com/rapidsai/cudf.git#branch=branch-${p
 # sha256sums=('SKIP' 'SKIP')
 # sha256sums=('SKIP')
 # sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP')
-sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP')
+sha256sums=( 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP')
 # sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP')
 #sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP')
 # sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP')
@@ -109,7 +108,6 @@ prepare() {
 git submodule update --init --recursive
   cd "${srcdir}"
  patch -p0 < cu-test.patch
-# patch -p0 < cc.patch
 # patch -p0 < third.patch
 # patch -p0 < binop.patch
 #  patch -p0 < build.sh.patch
@@ -126,6 +124,7 @@ git submodule update --init --recursive
 #   patch -p0 < reader_impl.cu.patch
 #   patch -p0 <  from.arrow.cu.patch
 ##     patch -p0 < ipc.cpp.patch
+# patch -p0 < cu.patch
   patch -p0 < cc-rmm.patch
   # cp rmm/cmake/thirdparty/get_spdlog.cmake rmm/cmake/thirdparty/get_thrust.cmake
   # ls rmm/cmake/thirdparty/get_thrust.cmake | xargs sed -i -e 's/spdlog/thrust/g' 
@@ -214,17 +213,17 @@ git submodule update --init --recursive
                 -DCUDF_ENABLE_ARROW_S3=OFF \
          -DCMAKE_CXX_STANDARD=17 \
           -DCUDF_USE_PER_THREAD_DEFAULT_STREAM=ON \
-           -DCUDF_VERSION_Arrow=10.0.1 \
+           -DCUDF_VERSION_Arrow=11.0.0 \
           -DCMAKE_BUILD_TYPE=Release -DFIND_CUDF_CPP=ON \
           -Drmm_DIR="${srcdir}"/rmm/build -Dkvikio_DIR="${srcdir}"/kvikio/cpp/build
           # -DCUDF_USE_ARROW_STATIC=ON \
              #   -DBUILD_SHARED_LIBS=OFF && \
 
     if [ -f cpp/build/_deps/libcudacxx-src/include/cuda/std/detail/__config ]; then
-      wckekka=$(grep "//    #ifndef __forceinline__" cpp/build/_deps/libcudacxx-src/include/cuda/std/detail/__config  | wc -l)
-      if [ $wckekka le 0 ]; then
+#      wckekka=`grep "//    #ifndef __forceinline__" cpp/build/_deps/libcudacxx-src/include/cuda/std/detail/__config  | wc -l`
+#      if [ $wckekka le 0 ]; then
         patch -p0 < ../third.patch
-      fi
+#      fi
     fi
 
     
@@ -232,7 +231,7 @@ git submodule update --init --recursive
     find . -name flags.make | xargs  sed -i -e 's/--generate-code=arch=compute_60,code=\[sm_60\] --generate-code=arch=compute_70,code=\[sm_70\] --generate-code=arch=compute_75,code=\[sm_75\] --generate-code=arch=compute_80,code=\[sm_80\]/--generate-code=arch=compute_86,code=\[sm_86\]/g'
     find . -name flags.make | xargs  sed -i -e 's/--generate-code=arch=compute_60,code=\[compute_60,sm_60\] --generate-code=arch=compute_70,code=\[sm_70\] --generate-code=arch=compute_75,code=\[sm_75\] --generate-code=arch=compute_80,code=\[compute_80,sm_80\]/--generate-code=arch=compute_86,code=\[sm_86\]/g'
 
-  make  -j14 -C .   VERBOSE=1
+  make  -j12 -C .   VERBOSE=1
   # cmake --build . -j$(nproc) -v
   # cd "${srcdir}"/cudf/cpp/build/_deps/rmm-src/include
   # rm -rf rm
@@ -267,7 +266,7 @@ package_cudf() {
 #  cd "${srcdir}"/cudf/python/cudf
   # CUDA_HOME=/opt/cuda LD_LIBRARY_PATH=/opt/cuda/lib64:${LD_LIBRARY_PATH} python setup.py build_ext -j${PARALLEL_LEVEL:-1} --library-dir=${srcdir}/cudf/cpp/build install --single-version-externally-managed --record=record.txt --prefix=/usr --root="${pkgdir}"
 
-  make  -j12 -C .  DESTDIR="${pkgdir}" install VERBOSE=1
+  make  -j2 -C .  DESTDIR="${pkgdir}" install VERBOSE=1
 
 
   install -Dm644 ${srcdir}/cudf/LICENSE ${pkgdir}/usr/share/licenses/cudf/LICENSE
@@ -288,6 +287,7 @@ package_cudf() {
    rm -rf ${pkgdir}/usr/include/nvcomp
    rm -rf ${pkgdir}/usr/include/nvcomp.h
    rm -rf ${pkgdir}/usr/include/nvcomp.hpp
+   rm -rf ${pkgdir}/usr/include/native
   
   # rm -rf ${pkgdir}/usr/include/rapids/thrust
   # rm -rf ${pkgdir}/usr/include/cuco
@@ -403,9 +403,9 @@ package_python-cudf()
   CMAKE_CUDA_ARCHITECTURES=86 \
   CMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11 \
   CUDAHOSTCXX=/usr/bin/g++-11 \
-    python setup.py build_ext --inplace -- -DFIND_RMM_CPP=ON -DCMAKE_PREFIX_PATH=/usr -DCMAKE_CUDA_ARCHITECTURES=86  -DCMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11
+    python setup.py build_ext --inplace -- -DFIND_RMM_CPP=ON -DCMAKE_PREFIX_PATH=/usr -DCMAKE_CUDA_ARCHITECTURES=86  -DCMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11 -- -j2
   CC=/usr/bin/gcc CXX=/usr/bin/g++ \
-    python setup.py install --single-version-externally-managed --record=record.txt --prefix=/usr --root="${pkgdir}"  -- -DFIND_RMM_CPP=ON -DCMAKE_PREFIX_PATH=/usr -DCMAKE_CUDA_ARCHITECTURES=86 -DCMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11
+    python setup.py install --single-version-externally-managed --record=record.txt --prefix=/usr --root="${pkgdir}"  -- -DFIND_RMM_CPP=ON -DCMAKE_PREFIX_PATH=/usr -DCMAKE_CUDA_ARCHITECTURES=86 -DCMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11 -- -j2
 
   cd "${srcdir}"/kvikio/python
   export LD_LIBRARY_PATH=/opt/cuda/lib64:$LD_LIBRARY_PATH
@@ -424,7 +424,7 @@ package_python-cudf()
   CMAKE_CUDA_ARCHITECTURES=86 \
   CMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11 \
   CUDAHOSTCXX=/usr/bin/g++-11 \
-PARALLEL_LEVEL=${PARALLEL_LEVEL} python setup.py build_ext --inplace -- -Dnvcomp_DIR="${pkgdir}"/../cudf/usr/lib/cmake/nvcomp -Dcudf_DIR="${pkgdir}"/../cudf/usr/lib/cmake/cudf -DCMAKE_PREFIX_PATH="${pkgdir}"/../cudf/usr   -DFIND_CUDF_CPP=ON -DCMAKE_CUDA_ARCHITECTURES=86 -DCMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11 -- -j${PARALLEL_LEVEL:-1}
+PARALLEL_LEVEL=${PARALLEL_LEVEL} python setup.py build_ext --verbose --inplace -- -Dnvcomp_DIR="${pkgdir}"/../cudf/usr/lib/cmake/nvcomp -Dcudf_DIR="${pkgdir}"/../cudf/usr/lib/cmake/cudf -DCMAKE_PREFIX_PATH="${pkgdir}"/../cudf/usr   -DFIND_CUDF_CPP=ON -DCMAKE_CUDA_ARCHITECTURES=86 -DCMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11 -- -j${PARALLEL_LEVEL:-1}
 # PARALLEL_LEVEL=${PARALLEL_LEVEL} python setup.py build_ext --inplace -- -Dnvcomp_DIR="${pkgdir}"/../cudf/usr/lib/cmake/nvcomp -Drmm_DIR="${pkgdir}"/../cudf/usr/lib/cmake/rmm -Dcudf_DIR="${pkgdir}"/../cudf/usr/lib/cmake/cudf -DCMAKE_PREFIX_PATH="${pkgdir}"/../cudf/usr   -DFIND_CUDF_CPP=ON -DCMAKE_CUDA_ARCHITECTURES=86 -DCMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-11 -- -j${PARALLEL_LEVEL:-1}
   PYTHONPATH="${pkgdir}"/usr/lib/python3.10/site-packages \
   CC=/usr/bin/gcc CXX=/usr/bin/g++ \

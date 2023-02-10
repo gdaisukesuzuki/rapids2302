@@ -7,10 +7,10 @@ pkgname=(curaft python-curaft)
 _pkgname=raft
 # pkgver=0.19.2
 pkgver=23.02
-_pkgver=22.12.00
+_pkgver=23.02.00
 # _pkgver=22.06
 
-pkgrel=7
+pkgrel=11
 pkgdesc="RAPIDS Memory Manager"
 arch=('x86_64')
 url="https://rapids.ai/"
@@ -34,8 +34,8 @@ depends=( 'faiss' 'gcc11' 'cudf' 'nccl' 'cuda' 'cmake' 'boost-libs' 'spdlog' 'fm
 # source=("${_pkgname}::git+https://github.com/rapidsai/cudf.git"
 # source=("${_pkgname}::git+https://github.com/rapidsai/cudf.git#branch=branch-${_pkgver}"
 # source=("${_pkgname}::git+https://github.com/rapidsai/cudf.git#branch=branch-22.04"
-# source=("${_pkgname}::git+https://github.com/rapidsai/raft.git#tag=v${_pkgver}"
-source=("${_pkgname}::git+https://github.com/rapidsai/raft.git#branch=branch-${pkgver}"
+# source=("${_pkgname}::git+https://github.com/rapidsai/raft.git#branch=branch-${pkgver}"
+source=("${_pkgname}::git+https://github.com/rapidsai/raft.git#tag=v${_pkgver}"
 # "cu.patch"
 # "cc.patch"
  "cmake.patch"
@@ -114,7 +114,7 @@ build() {
           -DRAFT_ENABLE_thrust_DEPENDENCY=ON \
           -DUSE_NVTX=ON \
           -DBUILD_TESTS=ON \
-          -DBUILD_BENCHMARKS=OFF \
+          -DBUILD_BENCHMARKS=ON \
           -DDISABLE_DEPRECATION_WARNING=ON \
          -DCMAKE_CXX_STANDARD=17 \
           -DCMAKE_BUILD_TYPE=Release  \

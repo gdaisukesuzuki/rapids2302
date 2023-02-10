@@ -1,0 +1,36 @@
+*** cuspatial/cpp/include/cuspatial/distance/point_linestring_distance.hpp-dist	2023-01-19 10:05:05.588655471 +0900
+--- cuspatial/cpp/include/cuspatial/distance/point_linestring_distance.hpp	2023-01-19 10:05:19.132451189 +0900
+***************
+*** 14,19 ****
+--- 14,20 ----
+   * limitations under the License.
+   */
+  
+  #include <cudf/column/column_view.hpp>
++ #include <optional>
+  
+  namespace cuspatial {
+*** cuspatial/cpp/include/cuspatial/distance/point_distance.hpp-dist	2023-01-20 15:53:55.874393153 +0900
+--- cuspatial/cpp/include/cuspatial/distance/point_distance.hpp	2023-01-20 15:54:25.391619751 +0900
+***************
+*** 17,22 ****
+--- 17,23 ----
+  #pragma once
+  
+  #include <cudf/column/column_view.hpp>
++ #include <optional>
+  
+  namespace cuspatial {
+  
+*** cuspatial/cpp/include/cuspatial/distance/linestring_distance.hpp-dist	2023-01-20 15:58:01.382366983 +0900
+--- cuspatial/cpp/include/cuspatial/distance/linestring_distance.hpp	2023-01-20 15:58:13.332592025 +0900
+***************
+*** 17,22 ****
+--- 17,23 ----
+  #pragma once
+  
+  #include <cudf/column/column_view.hpp>
++ #include <optional>
+  #include <cudf/utilities/span.hpp>
+  
+  #include <rmm/mr/device/per_device_resource.hpp>

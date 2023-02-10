@@ -1,27 +1,3 @@
-*** cudf/cpp/cmake/thirdparty/get_arrow.cmake-dist	2022-11-03 19:22:09.661557439 +0900
---- cudf/cpp/cmake/thirdparty/get_arrow.cmake	2022-11-03 19:22:59.169177643 +0900
-***************
-*** 61,69 ****
-      set(ARROW_ARMV8_ARCH "armv8-a")
-    endif()
-  
-!   if(NOT ARROW_SIMD_LEVEL)
-!     set(ARROW_SIMD_LEVEL "NONE")
-!   endif()
-  
-    if(BUILD_STATIC)
-      set(ARROW_BUILD_STATIC ON)
---- 61,70 ----
-      set(ARROW_ARMV8_ARCH "armv8-a")
-    endif()
-  
-!   # if(NOT ARROW_SIMD_LEVEL)
-!   #   set(ARROW_SIMD_LEVEL "NONE")
-!   # endif()
-!   set(ARROW_SIMD_LEVEL "AVX512")
-  
-    if(BUILD_STATIC)
-      set(ARROW_BUILD_STATIC ON)
 *** cudf/cpp/CMakeLists.txt-dist	2022-12-10 22:26:34.346186839 +0900
 --- cudf/cpp/CMakeLists.txt	2022-12-10 22:26:48.275929562 +0900
 ***************
@@ -41,3 +17,63 @@
     include(${rapids-cmake-dir}/cpm/nvbench.cmake)
     rapids_cpm_nvbench()
     add_subdirectory(benchmarks)
+*** cudf/python/cudf/udf_cpp/groupby/CMakeLists.txt-dist	2023-02-02 16:26:27.479863376 +0900
+--- cudf/python/cudf/udf_cpp/groupby/CMakeLists.txt	2023-02-02 16:26:51.900321463 +0900
+***************
+*** 44,50 ****
+  
+  # always build a default PTX file in case RAPIDS_NO_INITIALIZE is set and the device cc can't be
+  # safely queried through a context
+! list(INSERT CMAKE_CUDA_ARCHITECTURES 0 "60")
+  
+  list(TRANSFORM CMAKE_CUDA_ARCHITECTURES REPLACE "-real" "")
+  list(TRANSFORM CMAKE_CUDA_ARCHITECTURES REPLACE "-virtual" "")
+--- 44,50 ----
+  
+  # always build a default PTX file in case RAPIDS_NO_INITIALIZE is set and the device cc can't be
+  # safely queried through a context
+! list(INSERT CMAKE_CUDA_ARCHITECTURES 0 "86")
+  
+  list(TRANSFORM CMAKE_CUDA_ARCHITECTURES REPLACE "-real" "")
+  list(TRANSFORM CMAKE_CUDA_ARCHITECTURES REPLACE "-virtual" "")
+*** cudf/cpp/cmake/thirdparty/get_arrow.cmake.orig	2023-02-07 08:45:06.726324168 +0900
+--- cudf/cpp/cmake/thirdparty/get_arrow.cmake	2023-02-08 23:37:29.296755749 +0900
+***************
+*** 122,130 ****
+      set(ARROW_ARMV8_ARCH "armv8-a")
+    endif()
+  
+!   if(NOT ARROW_SIMD_LEVEL)
+!     set(ARROW_SIMD_LEVEL "NONE")
+!   endif()
+  
+    if(BUILD_STATIC)
+      set(ARROW_BUILD_STATIC ON)
+--- 122,131 ----
+      set(ARROW_ARMV8_ARCH "armv8-a")
+    endif()
+  
+!   # if(NOT ARROW_SIMD_LEVEL)
+!   #   set(ARROW_SIMD_LEVEL "NONE")
+!   # endif()
+!   set(ARROW_SIMD_LEVEL "AVX512")
+  
+    if(BUILD_STATIC)
+      set(ARROW_BUILD_STATIC ON)
+***************
+*** 379,385 ****
+  
+  if(NOT DEFINED CUDF_VERSION_Arrow)
+    set(CUDF_VERSION_Arrow
+!       10.0.1
+        CACHE STRING "The version of Arrow to find (or build)"
+    )
+  endif()
+--- 380,386 ----
+  
+  if(NOT DEFINED CUDF_VERSION_Arrow)
+    set(CUDF_VERSION_Arrow
+!       11.0.0
+        CACHE STRING "The version of Arrow to find (or build)"
+    )
+  endif()

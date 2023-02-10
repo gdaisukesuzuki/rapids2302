@@ -2,9 +2,9 @@
 pkgname=python-cupy
 _pkgname=cupy
 pkgver=12.0.0
-_pkgver=12.0.0b2
+_pkgver=12.0.0b3
 # _cubver=1.12.1
-pkgrel=1
+pkgrel=2
 pkgdesc="NumPy-like API accelerated with CUDA"
 _github="cupy/cupy"
 url="https://cupy.dev"

@@ -9,7 +9,7 @@ arch=('i686' 'x86_64')
 url="https://github.com/facebookresearch/faiss"
 license=('MIT')
 pkgver=1.7.3
-pkgrel=3
+pkgrel=5
 options=('staticlibs')
 source=(${_pkgname}::git+https://github.com/facebookresearch/faiss.git#tag=v${pkgver}
 )

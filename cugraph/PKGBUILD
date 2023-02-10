@@ -9,8 +9,8 @@ _pkgname=cugraph
 # _pkgname2=hornet
 pkgver=23.02
 # _pkgver=22.10
-_pkgver=22.12.00
-pkgrel=6
+_pkgver=23.02.00
+pkgrel=9
 pkgdesc="RAPIDS ML"
 arch=('x86_64')
 url="https://rapids.ai/"
@@ -22,8 +22,8 @@ depends=('curaft' 'cuda' 'cmake'  'spdlog' 'faiss' 'cugraphops' 'cudf' )
 # depends=('clang' 'rapids-cudf' 'gcc8' 'cuda' 'cmake' 'nccl' 'python' 'cython' 'libcypher-parser-static' 'hortnet')
 # depends=('clang' 'rapids-cudf' 'gcc8' 'cuda' 'cmake' 'nccl' 'python' 'cython' 'libcypher-parser-static' 'gunrock-static')
 # source=("${_pkgname}::git+https://github.com/rapidsai/cugraph.git"
-# source=("${_pkgname}::git+https://github.com/rapidsai/cugraph.git#tag=v${_pkgver}"
-source=("${_pkgname}::git+https://github.com/rapidsai/cugraph.git#branch=branch-${pkgver}"
+# source=("${_pkgname}::git+https://github.com/rapidsai/cugraph.git#branch=branch-${pkgver}"
+source=("${_pkgname}::git+https://github.com/rapidsai/cugraph.git#tag=v${_pkgver}"
 #  "git+https://github.com/hornet-gt/hornet.git"
    # "error_utils.h.patch" "renumber.cuh.patch"
 #   "cmake.patch"
@@ -217,6 +217,10 @@ package_python-cugraph(){
   rm -rf ${pkgdir}/usr/lib/cmake/cugraph
   rm -rf ${pkgdir}/usr/lib/libcugraph.so
   rm -rf ${pkgdir}/usr/lib/libcugraph_c.so
+  cd ${srcdir}/cugraph/datasets
+  ./get_test_data.sh
+  mkdir -p ${pkgdir}/usr/lib/python3.10/site-packages/pylibcugraph/datasets
+  cp -pr * ${pkgdir}/usr/lib/python3.10/site-packages/pylibcugraph/datasets
 }
 
 

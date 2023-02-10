@@ -3,7 +3,7 @@
 pkgname=cugraphops-conda
 provides=(cugraphops)
 pkgver=23.02
-pkgrel=0
+pkgrel=1
 pkgdesc=""
 arch=('x86_64')
 url="https://anaconda.org/rapidsai-nightly/libcugraphops/files"
@@ -28,7 +28,15 @@ source=(
 # https://anaconda.org/rapidsai-nightly/libcugraphops/23.02.00a221215/download/linux-64/libcugraphops-23.02.00a221215-cuda11_g6a57606_38.tar.bz2
 #https://anaconda.org/rapidsai-nightly/libcugraphops/23.02.00a221219/download/linux-64/libcugraphops-23.02.00a221219-cuda11_gf60fcbab_41.tar.bz2
 #https://anaconda.org/rapidsai-nightly/libcugraphops/23.02.00a221224/download/linux-64/libcugraphops-23.02.00a221224-cuda11_g4f0facd3_44.tar.bz2
-https://anaconda.org/rapidsai-nightly/libcugraphops/23.02.00a230105/download/linux-64/libcugraphops-23.02.00a230105-cuda11_g82978516_47.tar.bz2
+#https://anaconda.org/rapidsai-nightly/libcugraphops/23.02.00a230105/download/linux-64/libcugraphops-23.02.00a230105-cuda11_g82978516_47.tar.bz2
+#https://anaconda.org/rapidsai-nightly/libcugraphops/23.02.00a230109/download/linux-64/libcugraphops-23.02.00a230109-cuda11_gd629ad00_50.tar.bz2
+#https://anaconda.org/rapidsai-nightly/libcugraphops/23.02.00a230111/download/linux-64/libcugraphops-23.02.00a230111-cuda11_gacbdf19b_55.tar.bz2
+#https://anaconda.org/rapidsai-nightly/libcugraphops/23.02.00a230119/download/linux-64/libcugraphops-23.02.00a230119-cuda11_gf0c54a2a_56.tar.bz2
+#https://anaconda.org/rapidsai-nightly/libcugraphops/23.02.00a230120/download/linux-64/libcugraphops-23.02.00a230120-cuda11_gaaab4185_58.tar.bz2
+# https://anaconda.org/rapidsai-nightly/libcugraphops/23.02.00a230123/download/linux-64/libcugraphops-23.02.00a230123-cuda11_g6a3d86ce_60.tar.bz2
+#https://anaconda.org/rapidsai-nightly/libcugraphops/23.02.00a230128/download/linux-64/libcugraphops-23.02.00a230128-cuda11_gdc0b7f79_65.tar.bz2
+#https://anaconda.org/rapidsai-nightly/libcugraphops/23.02.00a230203/download/linux-64/libcugraphops-23.02.00a230203-cuda11_gb5111e18_66.tar.bz2
+https://anaconda.org/nvidia/libcugraphops/23.02.00/download/linux-64/libcugraphops-23.02.00-cuda11_g95b471e2_0.tar.bz2
 )
 #"cc.patch" )
 sha512sums=('SKIP' )

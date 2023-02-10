@@ -6,9 +6,9 @@
 pkgname=(python-dask-cuda)
 _pkgname=dask-cuda
 #_pkgver=22.06.00
-_pkgver=22.12.00
+_pkgver=23.02.00
 pkgver=23.02
-pkgrel=0
+pkgrel=1
 pkgdesc="RAPIDS Memory Manager"
 arch=('x86_64')
 url="https://rapids.ai/"
@@ -16,8 +16,8 @@ license=('custom')
 
 depends=('cuda' 'cmake' 'python-numba' 'python-dask' 'python-distributed')
 # source=("${_pkgname}::git+https://github.com/rapidsai/dask-cuda.git")
-# source=("${_pkgname}::git+https://github.com/rapidsai/dask-cuda.git#tag=v${_pkgver}")
-source=("${_pkgname}::git+https://github.com/rapidsai/dask-cuda.git#branch=branch-${pkgver}")
+source=("${_pkgname}::git+https://github.com/rapidsai/dask-cuda.git#tag=v${_pkgver}")
+# source=("${_pkgname}::git+https://github.com/rapidsai/dask-cuda.git#branch=branch-${pkgver}")
 
 
 
