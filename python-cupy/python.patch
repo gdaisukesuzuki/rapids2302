@@ -1,68 +1,3 @@
-*** cupy/cupy_backends/cuda/libs/cusparselt.pyx-dist	2022-06-06 22:13:35.118163775 +0900
---- cupy/cupy_backends/cuda/libs/cusparselt.pyx	2022-06-06 22:31:28.290615626 +0900
-***************
-*** 98,104 ****
-          const void* data, size_t ataSize)
-      cusparseStatus_t cusparseLtMatmulGetWorkspace(
-          const cusparseLtHandle_t* handle,
-!         const cusparseLtMatmulAlgSelection_t* algSelection,
-          size_t* workspaceSize)
-      cusparseStatus_t cusparseLtMatmulPlanInit(
-          const cusparseLtHandle_t* handle,
---- 98,104 ----
-          const void* data, size_t ataSize)
-      cusparseStatus_t cusparseLtMatmulGetWorkspace(
-          const cusparseLtHandle_t* handle,
-!         const cusparseLtMatmulPlan_t* plan,
-          size_t* workspaceSize)
-      cusparseStatus_t cusparseLtMatmulPlanInit(
-          const cusparseLtHandle_t* handle,
-***************
-*** 371,382 ****
-      check_status(status)
-  
-  cpdef size_t matmulGetWorkspace(Handle handle,
-!                                 MatmulAlgSelection algSelection):
-      """Determines the required workspace size"""
-      cdef size_t workspaceSize
-      status = cusparseLtMatmulGetWorkspace(
-          <const cusparseLtHandle_t*> handle._ptr,
-!         <const cusparseLtMatmulAlgSelection_t*> algSelection._ptr,
-          &workspaceSize)
-      check_status(status)
-      return workspaceSize
---- 371,382 ----
-      check_status(status)
-  
-  cpdef size_t matmulGetWorkspace(Handle handle,
-!                                 MatmulPlan plan):
-      """Determines the required workspace size"""
-      cdef size_t workspaceSize
-      status = cusparseLtMatmulGetWorkspace(
-          <const cusparseLtHandle_t*> handle._ptr,
-!         <const cusparseLtMatmulPlan_t*> plan._ptr,
-          &workspaceSize)
-      check_status(status)
-      return workspaceSize
-*** cupy/examples/cusparselt/matmul.py-dist	2022-06-06 23:11:08.307538184 +0900
---- cupy/examples/cusparselt/matmul.py	2022-06-06 23:13:14.173093927 +0900
-***************
-*** 56,62 ****
-  cusparselt.matmulAlgSetAttribute(handle, alg_sel,
-                                   cusparselt.CUSPARSELT_MATMUL_ALG_CONFIG_ID,
-                                   alg.ctypes.data, 4)
-! workspace_size = cusparselt.matmulGetWorkspace(handle, alg_sel)
-  workspace = cupy.empty(workspace_size, dtype='int8')
-  cusparselt.matmulPlanInit(handle, plan, matmul, alg_sel, workspace_size)
-  
---- 56,62 ----
-  cusparselt.matmulAlgSetAttribute(handle, alg_sel,
-                                   cusparselt.CUSPARSELT_MATMUL_ALG_CONFIG_ID,
-                                   alg.ctypes.data, 4)
-! workspace_size = cusparselt.matmulGetWorkspace(handle, plan)
-  workspace = cupy.empty(workspace_size, dtype='int8')
-  cusparselt.matmulPlanInit(handle, plan, matmul, alg_sel, workspace_size)
-  
 *** cupy/cupy_backends/cuda/libs/cusparselt.pxd-dist	2022-06-28 17:49:01.098110960 +0900
 --- cupy/cupy_backends/cuda/libs/cusparselt.pxd	2022-06-28 17:55:35.049725677 +0900
 ***************
@@ -104,3 +39,150 @@
   
       # cusparseLtPruneAlg_t
       CUSPARSELT_PRUNE_SPMMA_TILE = 0
+*** cupy/examples/cusparselt/matmul.py-dist	2023-02-26 07:13:02.334317731 +0900
+--- cupy/examples/cusparselt/matmul.py	2023-02-26 07:12:01.363764270 +0900
+***************
+*** 56,62 ****
+  cusparselt.matmulAlgSetAttribute(handle, alg_sel,
+                                   cusparselt.CUSPARSELT_MATMUL_ALG_CONFIG_ID,
+                                   alg.ctypes.data, 4)
+! workspace_size = cusparselt.matmulGetWorkspace(handle, alg_sel)
+  workspace = cupy.empty(workspace_size, dtype='int8')
+  cusparselt.matmulPlanInit(handle, plan, matmul, alg_sel, workspace_size)
+  
+--- 56,63 ----
+  cusparselt.matmulAlgSetAttribute(handle, alg_sel,
+                                   cusparselt.CUSPARSELT_MATMUL_ALG_CONFIG_ID,
+                                   alg.ctypes.data, 4)
+! # workspace_size = cusparselt.matmulGetWorkspace(handle, plan)
+! workspace_size = 0
+  workspace = cupy.empty(workspace_size, dtype='int8')
+  cusparselt.matmulPlanInit(handle, plan, matmul, alg_sel, workspace_size)
+  
+*** cupy/cupy_backends/cuda/libs/cusparselt.pyx-dist	2023-02-26 20:52:55.979643067 +0900
+--- cupy/cupy_backends/cuda/libs/cusparselt.pyx	2023-02-26 20:52:23.069069998 +0900
+***************
+*** 37,42 ****
+--- 37,43 ----
+      ctypedef int cusparseLtMatmulAlg_t 'cusparseLtMatmulAlg_t'
+      ctypedef int cusparseLtMatmulAlgAttribute_t 'cusparseLtMatmulAlgAttribute_t'  # NOQA
+      ctypedef int cusparseLtPruneAlg_t 'cusparseLtPruneAlg_t'
++     ctypedef int cusparseLtSplitKMode_t 'cusparseLtSplitKMode_t'
+  
+      # Management Functions
+      cusparseStatus_t cusparseLtInit(cusparseLtHandle_t* handle)
+***************
+*** 66,71 ****
+--- 67,77 ----
+          const cusparseLtMatDescriptor_t* matDescr,
+          cusparseLtMatDescAttribute_t matAttribute,
+          void* data, size_t dataSize)
++     cusparseStatus_t cusparseLtMatDescSetAttribute(
++         const cusparseLtHandle_t* handle,
++         const cusparseLtMatDescriptor_t* matDescr,
++         cusparseLtMatDescAttribute_t matAttribute,
++         void* data, size_t dataSize)
+      cusparseStatus_t cusparseLtMatmulDescriptorInit(
+          const cusparseLtHandle_t* handle,
+          cusparseLtMatmulDescriptor_t* matMulDescr,
+***************
+*** 96,104 ****
+          cusparseLtMatmulAlgSelection_t* algSelection,
+          cusparseLtMatmulAlgAttribute_t attribute,
+          const void* data, size_t ataSize)
+!     cusparseStatus_t cusparseLtMatmulGetWorkspace(
+          const cusparseLtHandle_t* handle,
+          const cusparseLtMatmulAlgSelection_t* algSelection,
+          size_t* workspaceSize)
+      cusparseStatus_t cusparseLtMatmulPlanInit(
+          const cusparseLtHandle_t* handle,
+--- 102,115 ----
+          cusparseLtMatmulAlgSelection_t* algSelection,
+          cusparseLtMatmulAlgAttribute_t attribute,
+          const void* data, size_t ataSize)
+!     cusparseStatus_t cusparseLtMatmulAlgGetAttribute(
+          const cusparseLtHandle_t* handle,
+          const cusparseLtMatmulAlgSelection_t* algSelection,
++         cusparseLtMatmulAlgAttribute_t attribute,
++         void* data, size_t ataSize)
++     cusparseStatus_t cusparseLtMatmulGetWorkspace(
++         const cusparseLtHandle_t* handle,
++         const cusparseLtMatmulPlan_t* plan,
+          size_t* workspaceSize)
+      cusparseStatus_t cusparseLtMatmulPlanInit(
+          const cusparseLtHandle_t* handle,
+***************
+*** 113,118 ****
+--- 124,134 ----
+          const void* alpha, const void* d_A, const void* d_B,
+          const void* beta, const void* d_C, void* d_D,
+          void* workspace, driver.Stream* streams, int32_t numStreams)
++     cusparseStatus_t cusparseLtMatmulSearch(
++         const cusparseLtHandle_t* handle, cusparseLtMatmulPlan_t* plan,
++         const void* alpha, const void* d_A, const void* d_B,
++         const void* beta, const void* d_C, void* d_D,
++         void* workspace, driver.Stream* streams, int32_t numStreams)
+  
+      # Helper Functions
+      cusparseStatus_t cusparseLtSpMMAPrune(
+***************
+*** 370,382 ****
+          <const void*> data, <size_t> dataSize)
+      check_status(status)
+  
+  cpdef size_t matmulGetWorkspace(Handle handle,
+!                                 MatmulAlgSelection algSelection):
+      """Determines the required workspace size"""
+      cdef size_t workspaceSize
+      status = cusparseLtMatmulGetWorkspace(
+          <const cusparseLtHandle_t*> handle._ptr,
+!         <const cusparseLtMatmulAlgSelection_t*> algSelection._ptr,
+          &workspaceSize)
+      check_status(status)
+      return workspaceSize
+--- 386,408 ----
+          <const void*> data, <size_t> dataSize)
+      check_status(status)
+  
++ cpdef matmulAlgGetAttribute(Handle handle, MatmulAlgSelection algSelection,
++                             attribute, size_t data, size_t dataSize):
++     """Gets the attribute related to algorithm selection descriptor."""
++     status = cusparseLtMatmulAlgGetAttribute(
++         <const cusparseLtHandle_t*> handle._ptr,
++         <const cusparseLtMatmulAlgSelection_t*> algSelection._ptr,
++         <cusparseLtMatmulAlgAttribute_t> attribute,
++         <void*> data, <size_t> dataSize)
++     check_status(status)
++ 
+  cpdef size_t matmulGetWorkspace(Handle handle,
+!                                 MatmulPlan plan):
+      """Determines the required workspace size"""
+      cdef size_t workspaceSize
+      status = cusparseLtMatmulGetWorkspace(
+          <const cusparseLtHandle_t*> handle._ptr,
+!         <const cusparseLtMatmulPlan_t*> plan._ptr,
+          &workspaceSize)
+      check_status(status)
+      return workspaceSize
+***************
+*** 412,417 ****
+--- 438,456 ----
+          <void*> workspace, <driver.Stream*> NULL, <int32_t> 0)
+      check_status(status)
+  
++ cpdef matmulSearch(Handle handle, MatmulPlan plan,
++              size_t alpha, size_t d_A, size_t d_B,
++              size_t beta, size_t d_C, size_t d_D, size_t workspace):
++     """Evaluates all available algorithms for the matrix multiplication"""
++     status = cusparseLtMatmulSearch(
++         <const cusparseLtHandle_t*> handle._ptr,
++         <cusparseLtMatmulPlan_t*> plan._ptr,
++         <const void*> alpha, <const void*> d_A, <const void*> d_B,
++         <const void*> beta, <const void*> d_C, <void*> d_D,
++         <void*> workspace, <driver.Stream*> NULL, <int32_t> 0)
++     check_status(status)
++ 
++ 
+  ###############################################################################
+  # cuSPARSELt: Helper Functions
+  ###############################################################################
